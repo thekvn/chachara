@@ -12,7 +12,7 @@ util.inherits(Room, EventEmitter);
 
 // Join the channel.
 Room.prototype.join = function $join$() {
-  var elem = (new xmpp.Element('presence', { from: this.client.jid + '/webapp', to: this.name + '/' + this.client.nick }))
+  var elem = (new xmpp.Element('presence', { from: this.client.jid, to: this.name + '/' + this.client.nick }))
                .c('x', { xmlns:'http://jabber.org/protocol/muc' })
                .c('history', { 'maxchars': 0 });
 
