@@ -1,21 +1,24 @@
-var http = require("http"),
-    io   = require("socket.io"),
-    sys  = require("sys");
-
+var express = require("express"),
+    io  = require("socket.io"),
+    sys = require("sys");
 
 var Client = require("./client.js");
 
-server = http.createServer(function(request, response) {
-  response.writeHead(200, {'Content-type':'text/html'});
-  response.end("<h1>Hello World</h1>");
+var app = express.createServer();
+
+app.get("/", function(req, res) {
+  app.set("views", __dirname + "/views");
+  app.set("view options", {layout:false})
+  app.use(express.static({ root: __dirname + '/public' }));
+
+  res.render("index.ejs");
 });
 
-server.listen(8080);
+app.listen(8080);
 
-var socket = io.listen(server);
+var socket = io.listen(app);
 
 socket.on('connection', function(client) {
-
   var xmppClient = new Client;
 
   client.on("message", function(message) {
