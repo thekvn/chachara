@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="http://127.0.0.1:8080/socket.io/socket.io.js"></script> 
+    <script> 
+      var socket = new io.Socket("127.0.0.1", {port:8080}); 
+      socket.connect();
+      socket.on('connect', function() {
+        console.log("connected...");
+      });
+
+      socket.on('message', function(message) {
+        console.log(message);
+      }) 
+
+      socket.on('disconnect', function(){
+        console.log("disconnected...");
+      }) 
+    </script> 
+  </head>
+  <body>
+  </body>
+</html>
