@@ -1,4 +1,4 @@
-var socket = new io.Socket("127.0.0.1", {port:8080});
+var socket = new io.Socket("127.0.0.1", { port: 8080 });
 // TODO support multiple rooms
 var room = null;
 
@@ -6,6 +6,8 @@ socket.connect();
 
 socket.on('connect', function() {
   console.log("connected...");
+  console.log("cookie...");
+  console.log(document.cookie);
   document.getElementById('signin').style.display = 'block';
 });
 
@@ -24,6 +26,8 @@ socket.on('message', function(message) {
     document.getElementById('chat').innerHTML = '';
     document.getElementById('form').style.display='block';
 
+  } else if (message.type == "set-cookie") {
+    setCookie(message.name, message.value);
   } else if (message.from == room) {
     renderAnnouncement(message);
   } else if (message.body) {
@@ -73,4 +77,37 @@ function renderAnnouncement(message){
 
   document.getElementById('chat').appendChild(el);
   document.getElementById('chat').scrollTop = 1000000;
+}
+
+
+
+// Cookies
+
+function setCookie(c_name, value, exdays) {
+  var exdate = new Date();
+  exdate.setDate(exdate.getDate() + exdays);
+  var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+  document.cookie=c_name + "=" + c_value;
+}
+
+function getCookie(c_name) {
+  var cookies = document.cookie.split(";");
+  for (i = 0; i < cookies.length; i++) {
+    x = cookies[i].substr(0, cookies[i].indexOf("="));
+    y = cookies[i].substr(cookies[i].indexOf("=") + 1);
+    x = x.replace(/^\s+|\s+$/g, "");
+    if (x == c_name)
+      return unescape(y);
+  }
+}
+
+function checkCookie() {
+  var username = getCookie("username");
+  if (username != null && username != "") {
+    alert("Welcome again " + username);
+  } else {
+    username = prompt("Please enter your name:", "");
+    if (username != null && username != "")
+      setCookie("username", username, 365);
+  }
 }
