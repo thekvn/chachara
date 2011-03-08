@@ -8,7 +8,7 @@
   </head>
   <body>
     <div id="primary-pane"><ul></ul>
-      <div id="chat"><p>Connecting...</p></div>
+      <div id="chat"><p>Connecting...<a onclick="setAllowNotification(); return false;" href="#">Enable notifications</a></p></div>
       <form id="signin" onSubmit="connect(); return false" style="display:none">
         <input type="text" id="jid" value="@joy.yinkei.com"><br />
         <input type="password" id="password"><br />
@@ -21,6 +21,7 @@
         <input type="text" autocomplete="off" id="text">
       </form>
     </div>
-    <div id="secondary-pane"><ul></ul></div>
+    <div id="secondary-pane"><ul></ul>
+    </div>
   </body>
 </html>

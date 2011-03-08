@@ -1,6 +1,9 @@
 var socket = new io.Socket("127.0.0.1", { port: 8080 });
 // TODO support multiple rooms
 var room = null;
+var jid = null;
+var nick = null;
+var useNotifications = false;
 
 socket.connect();
 
@@ -16,6 +19,8 @@ socket.on('message', function(message) {
 
   if (message.type == 'connect-ok') {
     room = document.getElementById('room').value;
+    jid = document.getElementById('jid').value;
+    nick = jid.split("@")[0];
 
     socket.send({
       type: 'join-room',
@@ -32,6 +37,7 @@ socket.on('message', function(message) {
     renderAnnouncement(message);
   } else if (message.body) {
     renderMessage(message);
+    if (useNotifications) displayNotification(message);
   }
 });
 
@@ -81,33 +87,21 @@ function renderAnnouncement(message){
 
 
 
-// Cookies
+// Notifications
 
-function setCookie(c_name, value, exdays) {
-  var exdate = new Date();
-  exdate.setDate(exdate.getDate() + exdays);
-  var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-  document.cookie=c_name + "=" + c_value;
+function displayNotification(message) {
+  if (window.webkitNotifications.checkPermission() == 0) {
+    if (message.body.indexOf(nick) != -1) {
+      var n = window.webkitNotifications.createNotification('', message.from, message.body);
+      n.show();
+    }
+	}
 }
 
-function getCookie(c_name) {
-  var cookies = document.cookie.split(";");
-  for (i = 0; i < cookies.length; i++) {
-    x = cookies[i].substr(0, cookies[i].indexOf("="));
-    y = cookies[i].substr(cookies[i].indexOf("=") + 1);
-    x = x.replace(/^\s+|\s+$/g, "");
-    if (x == c_name)
-      return unescape(y);
-  }
+function permissionGranted(){
+  useNotifications = true;
 }
 
-function checkCookie() {
-  var username = getCookie("username");
-  if (username != null && username != "") {
-    alert("Welcome again " + username);
-  } else {
-    username = prompt("Please enter your name:", "");
-    if (username != null && username != "")
-      setCookie("username", username, 365);
-  }
+function setAllowNotification(){
+  window.webkitNotifications.requestPermission(permissionGranted);
 }
