@@ -23,7 +23,7 @@ app.configure(function(){
 });
 
 app.get("/", function(req, res) {
-  // console.log(sys.inspect(req.headers));
+  // console.log(util.inspect(req.headers));
   res.render("index.ejs");
 });
 
@@ -34,7 +34,7 @@ var clients = {};
 
 socket.on('connection', function(client) {
 
-  console.log(sys.inspect(client.request.headers));
+  console.log(util.inspect(client.request.headers));
 
   var xmppClient = new Client;
 
