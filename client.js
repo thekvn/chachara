@@ -8,14 +8,15 @@ function Client() {
 
 Client.prototype.connect = function(jid, password, callback) {
   var self = this;
-  
+
   self.jid      = jid;
-  self.password = password
+  self.nick     = jid.split("@")[0];
+  self.password = password;
 
   self.connection = new xmpp.Client({
-    nick:"bot",
-    jid:self.jid,
-    password:self.password
+    nick: self.nick,
+    jid : self.jid + "/webapp",
+    password : self.password
   });
 
   self.rooms = {};
@@ -42,11 +43,6 @@ Client.prototype.connect = function(jid, password, callback) {
       var fromParts = stanza.attrs.from.split('/');
       var room = fromParts[0];
       var nick = fromParts[1];
-
-      if (stanza.attrs.from === room + "/" + self.nick) {
-        console.dir("Ignoring message from myself");
-        return;
-      }
 
       // Dispatch message to appropriate room.
       if (self.rooms[room]) {

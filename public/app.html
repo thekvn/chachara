@@ -1,22 +1,111 @@
 <html>
   <head>
-    <script src="http://127.0.0.1:8080/socket.io/socket.io.js"></script> 
-    <script> 
-      var socket = new io.Socket("127.0.0.1", {port:8080}); 
+    <title>Ch&aacute;chara</title>
+    <script src="http://127.0.0.1:8080/socket.io/socket.io.js"></script>
+    <script>
+      var socket = new io.Socket("127.0.0.1", {port:8080});
+      // TODO support multiple rooms
+      var room = null;
+
       socket.connect();
       socket.on('connect', function() {
         console.log("connected...");
+        document.getElementById('signin').style.display = 'block';
       });
 
       socket.on('message', function(message) {
         console.log(message);
-      }) 
+
+        if (message.type == 'connect-ok') {
+          room = document.getElementById('room').value;
+
+          socket.send({
+            type: 'join-room',
+            room: room
+          });
+
+          document.getElementById('signin').innerHTML = '';
+          document.getElementById('chat').innerHTML = '';
+          document.getElementById('form').style.display='block';
+
+        } else if (message.from == room) {
+          renderAnnouncement(message);
+        } else if (message.body) {
+          renderMessage(message);
+        }
+      });
 
       socket.on('disconnect', function(){
         console.log("disconnected...");
-      }) 
-    </script> 
+      });
+
+      function connect(){
+        var jid = document.getElementById('jid').value,
+            password = document.getElementById('password').value;
+
+        document.getElementById('chat').style.display = 'block';
+        document.getElementById('signin').style.display = 'none';
+        socket.send({
+          type: 'connect',
+          jid: jid,
+          password: password
+        });
+      }
+
+      function send(){
+        var text = document.getElementById('text').value;
+        socket.send({
+          type: 'message',
+          room: room,
+          body: text
+        });
+
+        document.getElementById('text').value = '';
+      }
+
+      function renderMessage(message){
+        var el = document.createElement('p');
+        el.innerHTML = '<b>' + message.from.split("/")[1] + ':</b> ' + message.body;
+
+        document.getElementById('chat').appendChild(el);
+        document.getElementById('chat').scrollTop = 1000000;
+      }
+
+      function renderAnnouncement(message){
+        var el = document.createElement('p');
+        el.innerHTML = '<em>' + message.body + '</em>';
+
+        document.getElementById('chat').appendChild(el);
+        document.getElementById('chat').scrollTop = 1000000;
+      }
+    </script>
   </head>
   <body>
+    <h1>Chachara</h1>
+    <div id="chat"><p>Connecting...</p></div>
+
+    <form id="signin" onSubmit="connect(); return false" style="display:none">
+      <input type="text" id="jid" value="@joy.yinkei.com"><br />
+      <input type="password" id="password"><br />
+      <input type="text" id="room" value="test@conference.joy.yinkei.com"><br />
+      <input type="submit" value="Sign In">
+    </form>
+
+    <form id="form" onSubmit="send(); return false">
+      <input type="text" autocomplete="off" id="text">
+      <input type="submit" value="Send">
+    </form>
+
+    <style>
+      #chat { height: 300px; overflow: auto; width: 800px; border: 1px solid #eee; font: 13px Helvetica, Arial; }
+      #chat { display:none; }
+      #chat p { padding: 8px; margin: 0; }
+      #chat p:nth-child(odd) { background: #F6F6F6; }
+      #form { width: 782px; background: #333; padding: 5px 10px; display: none; }
+      #form input[type=text] { width: 700px; padding: 5px; background: #fff; border: 1px solid #fff; }
+      #form input[type=submit] { cursor: pointer; background: #999; border: none; padding: 6px 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; margin-left: 5px; text-shadow: 0 1px 0 #fff; }
+      #form input[type=submit]:hover { background: #A2A2A2; }
+      #form input[type=submit]:active { position: relative; top: 2px; }
+    </style>
   </body>
 </html>
