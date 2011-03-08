@@ -1,13 +1,14 @@
 var xmpp = require('node-xmpp'),
     util = require('util'),
-    events = require('events');
+    EventEmitter = require('events').EventEmitter;
 
 function Room(client, name) {
   this.client = client;
   this.name = name;
 }
 
-Room.prototype = new events.EventEmitter;
+
+util.inherits(Room, EventEmitter);
 
 // Join the channel.
 Room.prototype.join = function $join$() {
@@ -27,10 +28,10 @@ Room.prototype.say = function $say$(what) {
 }
 
 Room.prototype.onMessage = function(stanza) {
-  this.emit({
-    to:stanza.attrs.to,
-    from:stanza.attrs.from,
-    body:stanza.getChild("body").getText()
+  this.emit("message", {
+    to:   stanza.attrs.to,
+    from: stanza.attrs.from,
+    body: stanza.getChild("body").getText()
   });
 }
 
