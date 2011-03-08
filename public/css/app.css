@@ -1,11 +1,11 @@
 body { background: #000; color: #FFF; }
 #primary-pane { width: 100%; height: 500px; border: 1px solid #fff; }
-#input-pane   { width: 100%; border: 1px solid #fff; }
-#input-pane input { width: 100%; height: 30px; background: #222; border: none; color: #FFF; }
+#input-pane { width: 100%; border: 1px solid #fff; }
+#input-pane form { margin: 0;}
+#input-pane input { padding: 5px; width: 100%; background: #111; border: none; color: #FFF; }
+
 #secondary-pane { width: 100%; height: 220px; border: 1px solid #fff; }
 
-
-#chat { height: 300px; overflow: auto; width: 800px; border: 1px solid #eee; font: 13px Helvetica, Arial; }
-#chat { display:none; }
-#chat p { padding: 8px; margin: 0; }
+#chat { padding: 5px; overflow: auto; width: 100%; height: 100%; font: 13px Helvetica, Arial; }
+#chat p { line-height: 1.5em; margin: 0; }
 #form { display: none; }

@@ -1,6 +1,6 @@
 var express = require("express"),
-    io  = require("socket.io"),
-    sys = require("sys");
+    io   = require("socket.io"),
+    util = require("util");
 
 var Client = require("./client.js");
 
@@ -24,7 +24,7 @@ socket.on('connection', function(client) {
   var xmppClient = new Client;
 
   client.on("message", function(message) {
-    console.log(sys.inspect(message));
+    console.log(util.inspect(message, true, null));
 
     if (message.type == 'connect') {
       xmppClient.connect(message.jid, message.password, function() {
@@ -51,5 +51,8 @@ socket.on('connection', function(client) {
   });
 
   client.on("disconnect", function() {
+    // TODO send presense info to server and disconnect
+    xmppClient = null;
+    delete xmppClient;
   });
 });
