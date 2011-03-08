@@ -1,16 +1,11 @@
 body { background: #000; color: #FFF; }
 #primary-pane { width: 100%; height: 500px; border: 1px solid #fff; }
 #input-pane   { width: 100%; border: 1px solid #fff; }
-#input-pane input { width: 100%; background: #222; border: none; color: #FFF; }
-#secondary-pane { width: 100%; height: 250px; border: 1px solid #fff; }
+#input-pane input { width: 100%; height: 30px; background: #222; border: none; color: #FFF; }
+#secondary-pane { width: 100%; height: 220px; border: 1px solid #fff; }
 
 
 #chat { height: 300px; overflow: auto; width: 800px; border: 1px solid #eee; font: 13px Helvetica, Arial; }
 #chat { display:none; }
 #chat p { padding: 8px; margin: 0; }
-#chat p:nth-child(odd) { background: #F6F6F6; }
-#form { width: 782px; background: #333; padding: 5px 10px; display: none; }
-#form input[type=text] { width: 700px; padding: 5px; background: #fff; border: 1px solid #fff; }
-#form input[type=submit] { cursor: pointer; background: #999; border: none; padding: 6px 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; margin-left: 5px; text-shadow: 0 1px 0 #fff; }
-#form input[type=submit]:hover { background: #A2A2A2; }
-#form input[type=submit]:active { position: relative; top: 2px; }
+#form { display: none; }
