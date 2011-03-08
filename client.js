@@ -59,6 +59,13 @@ Client.prototype.connect = function(jid, password, callback) {
     return room;
   }
 
+  Client.prototype.disconnect = function() {
+    this.connection.send(new xmpp.Element('presence', {type: 'unavailable'})
+                        .c('status').t('Logged out')
+                        .tree());
+    this.connection.end();
+  }
+
   self.connection.on("error", function(err) {
     console.log(sys.inspect(err));
   });

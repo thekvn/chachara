@@ -67,8 +67,7 @@ socket.on('connection', function(client) {
 
 
   client.on("disconnect", function() {
-    // TODO send presense info to server and disconnect
-    xmppClient = null;
+    xmppClient.disconnect();
     delete xmppClient;
   });
 });
