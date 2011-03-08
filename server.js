@@ -8,20 +8,22 @@ var Client = require("./client.js");
 var MemoryStore = connect.session.MemoryStore;
 var sessionStore = new MemoryStore();
 
-var app = express.createServer();
+var app = express.createServer(
+  express.cookieParser(),
+  express.session({
+    store: sessionStore,
+    secret: 'sekrit-chachara-js-*73$%#$'
+  })
+);
 
-app.get("/", function(req, res) {
+app.configure(function(){
   app.set("views", __dirname + "/views");
   app.set("view options", {layout:false})
   app.use(express.static(__dirname + '/public' ));
+});
 
+app.get("/", function(req, res) {
   // console.log(sys.inspect(req.headers));
-
-  app.use(express.session({
-    store: sessionStore,
-    secret: 'sekrit-chachara-js'
-  }));
-
   res.render("index.ejs");
 });
 
@@ -33,25 +35,6 @@ var clients = {};
 socket.on('connection', function(client) {
 
   console.log(sys.inspect(client.request.headers));
-
-  // var cookieString = client.request.headers.cookie;
-  //
-  // if (cookieString !== undefined) {
-  //
-  //   var parsedCookies = connect.utils.parseCookie(cookieString);
-  //   var connectSid = parsedCookies['connect.sid'];
-  //
-  //   if (connectSid) {
-  //     sessionStore.get(connectSid, function (error, session) {
-  //       // TODO reuse session
-  //     });
-  //   } else {
-  //     setCookie('connect.sid', 'test');
-  //   }
-  //
-  // } else {
-  //     setCookie('connect.sid', 'test');
-  // }
 
   var xmppClient = new Client;
 
