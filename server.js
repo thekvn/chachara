@@ -17,8 +17,10 @@ app.get("/", function(req, res) {
 app.listen(8080);
 
 var socket = io.listen(app);
+var clients = {};
 
 socket.on('connection', function(client) {
+  console.log(sys.inspect(client.request.headers));
   var xmppClient = new Client;
 
   client.on("message", function(message) {
