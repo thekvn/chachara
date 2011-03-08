@@ -9,7 +9,7 @@ var app = express.createServer();
 app.get("/", function(req, res) {
   app.set("views", __dirname + "/views");
   app.set("view options", {layout:false})
-  app.use(express.static({ root: __dirname + '/public' }));
+  app.use(express.static(__dirname + '/public' ));
 
   res.render("index.ejs");
 });
