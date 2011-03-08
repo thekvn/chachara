@@ -1,6 +1,8 @@
+<!DOCTYPE>
 <html>
   <head>
     <title>Ch&aacute;chara</title>
+    <link rel="stylesheet" href="/css/app.css" />
     <script src="http://127.0.0.1:8080/socket.io/socket.io.js"></script>
     <script>
       var socket = new io.Socket("127.0.0.1", {port:8080});
@@ -8,6 +10,7 @@
       var room = null;
 
       socket.connect();
+
       socket.on('connect', function() {
         console.log("connected...");
         document.getElementById('signin').style.display = 'block';
@@ -81,31 +84,21 @@
     </script>
   </head>
   <body>
-    <h1>Chachara</h1>
-    <div id="chat"><p>Connecting...</p></div>
-
-    <form id="signin" onSubmit="connect(); return false" style="display:none">
-      <input type="text" id="jid" value="@joy.yinkei.com"><br />
-      <input type="password" id="password"><br />
-      <input type="text" id="room" value="test@conference.joy.yinkei.com"><br />
-      <input type="submit" value="Sign In">
-    </form>
-
-    <form id="form" onSubmit="send(); return false">
-      <input type="text" autocomplete="off" id="text">
-      <input type="submit" value="Send">
-    </form>
-
-    <style>
-      #chat { height: 300px; overflow: auto; width: 800px; border: 1px solid #eee; font: 13px Helvetica, Arial; }
-      #chat { display:none; }
-      #chat p { padding: 8px; margin: 0; }
-      #chat p:nth-child(odd) { background: #F6F6F6; }
-      #form { width: 782px; background: #333; padding: 5px 10px; display: none; }
-      #form input[type=text] { width: 700px; padding: 5px; background: #fff; border: 1px solid #fff; }
-      #form input[type=submit] { cursor: pointer; background: #999; border: none; padding: 6px 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; margin-left: 5px; text-shadow: 0 1px 0 #fff; }
-      #form input[type=submit]:hover { background: #A2A2A2; }
-      #form input[type=submit]:active { position: relative; top: 2px; }
-    </style>
+    <div id="primary-pane"><ul></ul>
+      <div id="chat"><p>Connecting...</p></div>
+      <form id="signin" onSubmit="connect(); return false" style="display:none">
+        <input type="text" id="jid" value="@joy.yinkei.com"><br />
+        <input type="password" id="password"><br />
+        <input type="text" id="room" value="test@conference.joy.yinkei.com"><br />
+        <input type="submit" value="Sign In">
+      </form>
+    </div>
+    <div id="input-pane">
+      <form id="form" onSubmit="send(); return false">
+        <input type="text" autocomplete="off" id="text">
+        <input type="submit" value="Send">
+      </form>
+    </div>
+    <div id="secondary-pane"><ul></ul></div>
   </body>
 </html>
