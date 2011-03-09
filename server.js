@@ -5,14 +5,20 @@ var express = require("express"),
 
 var Client = require("./client.js");
 
-var MemoryStore = connect.session.MemoryStore;
-var sessionStore = new MemoryStore();
+function inspect(object){
+  console.log(util.inspect(object, false, 10));
+}
+
+function log(object){
+  console.log(object);
+}
 
 var app = express.createServer(
   express.cookieParser(),
   express.session({
-    store: sessionStore,
-    secret: 'sekrit-chachara-js-*73$%#$'
+    key: 'chachara.sid',
+    secret: 'sekrit-chachara-js-*73$%#$',
+    cookie: { httpOnly: false }
   })
 );
 
@@ -23,39 +29,71 @@ app.configure(function(){
 });
 
 app.get("/", function(req, res) {
-  // console.log(util.inspect(req.headers));
   res.render("index.ejs");
 });
 
 app.listen(8080);
 
-var socket = io.listen(app);
-var clients = {};
+
+var socket = io.listen(app),
+    connections = {};
 
 socket.on('connection', function(client) {
 
-  console.log(util.inspect(client.request.headers));
+  var xmppClient = null;
+  var identifier = null;
 
-  var xmppClient = new Client;
+  function setXmppClient(cookie){
+    identifier = cookie || client.sessionId;
+
+    xmppClient = connections[identifier]
+               ? connections[identifier]
+               : new Client();
+  }
 
   client.on("message", function(message) {
-    console.log(util.inspect(message, true, null));
 
     if (message.type == 'connect') {
-      xmppClient.connect(message.jid, message.password, function() {
-        client.send({type:"connect-ok"});
-      });
-    };
+      setXmppClient(message.sid);
+
+      if (xmppClient.connection == null) {
+
+        // Trying to authenticate for the first time
+        if (message.jid != undefined) {
+          xmppClient.connect(message.jid, message.password, function() {
+            connections[identifier] = xmppClient;
+            client.send( { type:"connect-ok" } );
+          });
+
+        // Trying to reconnect but there is no connection
+        } else {
+          client.send( { type:"connect-not-ok" } );
+        }
+
+      } else {
+        // Got existing connection
+        client.send( { type:"connect-ok" } );
+      }
+    }
 
     if (message.type == "join-room") {
-      xmppClient.join(message.room, function(room) {
-        client.send({type:"join-room-ok"});
-
-        room.on("message", function(m) {
-          m["type"] = "message";
+      if (xmppClient.rooms[message.room]) {
+        var room = xmppClient.rooms[message.room];
+        while ((m = room.buffer.shift()) != undefined){
           client.send(m);
-        })
-      });
+        }
+
+      } else {
+        xmppClient.join(message.room, function(room) {
+          client.send( { type: "join-room-ok" } );
+
+          room.on("message", function(m) {
+            client.send(m);
+            room.buffer.push(m);
+            if (room.buffer.length > room.bufferSize) room.buffer.shift();
+          })
+        });
+      }
     }
 
     if (message.type == "message") {
@@ -66,7 +104,11 @@ socket.on('connection', function(client) {
   });
 
   client.on("disconnect", function() {
-    // xmppClient.disconnect();
+    if (xmppClient != null && xmppClient.connection != null) {
+      xmppClient.disconnect();
+      // delete xmppClient;
+      // delete connections[identifier];
+    }
   });
 
 });

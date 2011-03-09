@@ -9,8 +9,13 @@ var room = null;
 var jid = null;
 var nick = null;
 var useNotifications = false;
+var sid = "chachara.sid";
 
 
+socket.on('connect', function() {
+  document.getElementById('signin').style.display = 'block';
+  reconnect();
+});
 
 socket.on('message', function(message) {
   console.log(message);
@@ -29,8 +34,8 @@ socket.on('message', function(message) {
     document.getElementById('chat').innerHTML = '';
     document.getElementById('form').style.display='block';
 
-  } else if (message.type == "set-cookie") {
-    setCookie(message.name, message.value);
+  } else if (message.type == "connect-not-ok") {
+    console.log("Tried to reuse connection but it didn't exist");
   } else if (message.from == room) {
     renderAnnouncement(message);
   } else if (message.body) {
@@ -52,8 +57,18 @@ function connect(){
   socket.send({
     type: 'connect',
     jid: jid,
-    password: password
+    password: password,
+    sid: getCookie(sid)
   });
+}
+
+function reconnect(){
+  if (getCookie(sid) != undefined) {
+    socket.send({
+      type: 'connect',
+      sid: getCookie(sid)
+    });
+  }
 }
 
 function send(){
@@ -103,5 +118,19 @@ function permissionGranted(){
 
 function setAllowNotification(){
   window.webkitNotifications.requestPermission(permissionGranted);
+}
+
+// Cookies
+
+function getCookie(c_name) {
+  console.log(document.cookie);
+  var cookies = document.cookie.split(";");
+  for (i = 0; i < cookies.length; i++) {
+    x = cookies[i].substr(0, cookies[i].indexOf("="));
+    y = cookies[i].substr(cookies[i].indexOf("=") + 1);
+    x = x.replace(/^\s+|\s+$/g, "");
+    if (x == c_name)
+      return unescape(y);
+  }
 }
 */

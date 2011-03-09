@@ -5,6 +5,8 @@ var xmpp = require('node-xmpp'),
 function Room(client, name) {
   this.client = client;
   this.name = name;
+  this.buffer = [];
+  this.bufferSize = 20;
 }
 
 
