@@ -4,24 +4,43 @@
     <title>Ch&aacute;chara</title>
     <link rel="stylesheet" type="text/css" href="/css/app.css" />
     <script src="http://127.0.0.1:8080/socket.io/socket.io.js"></script>
-    <script src="/javascripts/app.js"></script>
+    <script src="/js/lib/jquery-1.5.1.js"></script>
+    <script src="/js/lib/underscore.js"></script>
+    <script src="/js/lib/backbone.js"></script>
+    <script src="/js/chachara.js"></script>
+    <script src="/js/chachara.client.js"></script>
+    <script src="/js/chachara.signinview.js"></script>
+    <script src="/js/chachara.chatview.js"></script>
+    <script src="/js/chachara.application.js"></script>
+    <script src="/js/app.js"></script>
   </head>
+
+  <script type="template" id="signin-view-template">
+    <div class="signin-view">
+      <h1>Sign in</h1>
+      <form>
+        <label>Jabber ID <input type="text" class="jid" value="@joy.yinkei.com"></label>
+        <label>Password <input type="password" class="password"></label>
+        <button class="connect">Connet to Server</button>
+      </form>
+    </div>
+  </script>
+
+  <script type="template" id="chat-view-template">
+    <div class="chat-view">
+      <div class="primary-pane">
+        This is the primary pane
+      </div>
+      <div class="input-pane">
+        <input type="text"/>
+      </div>
+      <div class="secondary-pane">
+        This is the secondary pane
+      </div>
+    </div>
+  </script>
+
   <body>
-    <div id="primary-pane"><ul></ul>
-      <div id="chat"><p>Connecting...<a onclick="setAllowNotification(); return false;" href="#">Enable notifications</a></p></div>
-      <form id="signin" onSubmit="connect(); return false" style="display:none">
-        <input type="text" id="jid" value="@joy.yinkei.com"><br />
-        <input type="password" id="password"><br />
-        <input type="text" id="room" value="test@conference.joy.yinkei.com"><br />
-        <input type="submit" value="Sign In">
-      </form>
-    </div>
-    <div id="input-pane">
-      <form id="form" onSubmit="send(); return false">
-        <input type="text" autocomplete="off" id="text">
-      </form>
-    </div>
-    <div id="secondary-pane"><ul></ul>
-    </div>
+    <div id="app"></div>
   </body>
 </html>

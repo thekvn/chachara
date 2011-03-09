@@ -60,10 +60,12 @@ Client.prototype.connect = function(jid, password, callback) {
   }
 
   Client.prototype.disconnect = function() {
-    this.connection.send(new xmpp.Element('presence', {type: 'unavailable'})
-                        .c('status').t('Logged out')
-                        .tree());
-    this.connection.end();
+    if (this.connection) {
+      this.connection.send(new xmpp.Element('presence', {type: 'unavailable'})
+                          .c('status').t('Logged out')
+                          .tree());
+      this.connection.end();
+    }
   }
 
   self.connection.on("error", function(err) {

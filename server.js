@@ -48,11 +48,11 @@ socket.on('connection', function(client) {
     };
 
     if (message.type == "join-room") {
-
       xmppClient.join(message.room, function(room) {
         client.send({type:"join-room-ok"});
 
         room.on("message", function(m) {
+          m["type"] = "message";
           client.send(m);
         })
       });
@@ -65,9 +65,8 @@ socket.on('connection', function(client) {
     }
   });
 
-
   client.on("disconnect", function() {
     xmppClient.disconnect();
-    delete xmppClient;
   });
+
 });

@@ -1,18 +1,16 @@
-var socket = new io.Socket("127.0.0.1", { port: 8080 });
+$(function() {
+  Chachara.run();
+});
+
+
+/*
 // TODO support multiple rooms
 var room = null;
 var jid = null;
 var nick = null;
 var useNotifications = false;
 
-socket.connect();
 
-socket.on('connect', function() {
-  console.log("connected...");
-  console.log("cookie...");
-  console.log(document.cookie);
-  document.getElementById('signin').style.display = 'block';
-});
 
 socket.on('message', function(message) {
   console.log(message);
@@ -106,3 +104,4 @@ function permissionGranted(){
 function setAllowNotification(){
   window.webkitNotifications.requestPermission(permissionGranted);
 }
+*/
