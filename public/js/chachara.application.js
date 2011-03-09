@@ -27,20 +27,24 @@ $(function() {
         });
       });
     },
+
     chat: function() {
-      var self = this;
-
-      this.chatView = new Chachara.ChatView();
-      this.chatView.render();
-
+      var self     = this;
       var chatView = this.chatView;
       var client   = this.client;
+
+      chatView = new Chachara.ChatView();
+      chatView.render();
 
       client.join("test@conference.joy.yinkei.com");
 
       client.bind("message", function(message) {
         chatView.displayMessage(message);
       });
+
+      chatView.bind("input", function(data) {
+        client.send(data);
+      })
     },
   });
 });
