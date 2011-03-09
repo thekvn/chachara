@@ -91,6 +91,7 @@ socket.on('connection', function(client) {
 
       } else {
         xmppClient.join(message.room, function(room) {
+          room.members();
           client.send( { type: "join-room-ok" } );
 
           room.on("message", function(m) {
@@ -98,6 +99,16 @@ socket.on('connection', function(client) {
             client.send(m);
             room.buffer.push(m);
             if (room.buffer.length > room.bufferSize) room.buffer.shift();
+          })
+
+          room.on("member", function(m) {
+            // Placeholder
+            // I need to send status updates to the websocket client
+            if (m.status == "offline") {
+              console.log(m.nick + " just got offline");
+            } else {
+              console.log(m.nick + " just got online");
+            }
           })
         });
       }

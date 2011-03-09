@@ -38,6 +38,7 @@ Client.prototype.connect = function(jid, password, callback) {
     }
   }
 
+  // TODO refactor
   function onStanza(stanza) {
     if (stanza.attrs.type == "groupchat") {
       var fromParts = stanza.attrs.from.split('/');
@@ -47,6 +48,14 @@ Client.prototype.connect = function(jid, password, callback) {
       // Dispatch message to appropriate room.
       if (self.rooms[room]) {
         self.rooms[room]['onMessage'] && self.rooms[room].onMessage(stanza);
+      }
+    } else if (stanza.name == "presence") {
+      var fromParts = stanza.attrs.from.split('/');
+      var room = fromParts[0];
+      var nick = fromParts[1];
+
+      if (self.rooms[room]) {
+        self.rooms[room]['onMember'] && self.rooms[room].onMember(stanza);
       }
     }
   }

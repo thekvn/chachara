@@ -7,6 +7,7 @@ function Room(client, name) {
   this.name = name;
   this.buffer = [];
   this.bufferSize = 20;
+  this.participants = [];
 }
 
 
@@ -30,11 +31,40 @@ Room.prototype.say = function $say$(what, callback) {
   callback();
 }
 
+// Server is not sending member list
+Room.prototype.members = function $members$() {
+  iqAttrs = {
+    from: this.client.jid,
+    id: this.client.nick,
+    to: this.name,
+    type: 'get'
+  };
+
+  var elem = (new xmpp.Element('iq', iqAttrs))
+               .c('query', { xmlns:'http://jabber.org/protocol/muc#admin' })
+               .c('item', { affiliation: 'member' });
+
+  this.client.connection.send(elem);
+}
+
 Room.prototype.onMessage = function(stanza) {
   this.emit("message", {
     to:   stanza.attrs.to,
     from: stanza.attrs.from,
     body: stanza.getChild("body").getText()
+  });
+}
+
+Room.prototype.onMember = function(stanza) {
+  var status = stanza.attrs.type == "unavailable"
+                              ? "offline"
+                              : "online"
+
+  this.emit("member", {
+    to:     stanza.attrs.to,
+    from:   stanza.attrs.from,
+    nick:    stanza.attrs.from.split("/")[1],
+    status: status
   });
 }
 
