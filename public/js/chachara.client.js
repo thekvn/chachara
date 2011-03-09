@@ -21,7 +21,6 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     this.socket.on('connect', function() {
       self.log("Connected...");
       self.reconnect();
-      self.trigger('connect');
     });
 
     this.socket.on('message', function(message) {
@@ -59,11 +58,12 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
       type: 'connect',
       sid: this.sessionCookie
     }
+
     this.send(data);
   },
 
   send: function(data) {
-    this.log("[WS] " + data.type);
+    this.log("Sent [" + data.type + "]");
     this.socket.send(data);
   },
 

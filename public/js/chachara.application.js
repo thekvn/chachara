@@ -1,9 +1,21 @@
 $(function() {
   Chachara.Application = Backbone.Controller.extend({
     initialize: function(options) {
+      _.bindAll(this, "signin", "chat");
+
+      var self = this;
+
       this.client = options.client;
 
-      _.bindAll(this, "signin")
+      this.client.bind("connect-ok", function() {
+        console.log("[App] Presenting ChatView");
+        self.chat();
+      });
+
+      this.client.bind("connect-not-ok", function() {
+        console.log("[App] Presenting Signin Form")
+        self.signin();
+      });
     },
 
     routes: {
@@ -15,17 +27,12 @@ $(function() {
       var self = this;
 
       this.signinView = new Chachara.SigninView();
-      this.signinView.render();
 
       this.signinView.bind('connect', function(data) {
         self.client.authenticate(data);
       });
 
-      self.client.bind("connect-ok", function() {
-        self.signinView.dismiss();
-
-        self.chat();
-      });
+      this.signinView.render();
     },
 
     chat: function() {

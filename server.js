@@ -79,6 +79,12 @@ socket.on('connection', function(client) {
     if (message.type == "join-room") {
       if (xmppClient.rooms[message.room]) {
         var room = xmppClient.rooms[message.room];
+        room.on("message", function(m) {
+          m["type"] = "message";
+          client.send(m);
+          room.buffer.push(m);
+          if (room.buffer.length > room.bufferSize) room.buffer.shift();
+        })
         while ((m = room.buffer.shift()) != undefined){
           client.send(m);
         }

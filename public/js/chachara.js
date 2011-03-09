@@ -8,9 +8,7 @@ var Chachara = {
       sid: "chachara.sid"
     });
 
-    client.bind("connect", function() {
-      new Chachara.Application({client:client});
-      Backbone.history.start();
-    });
+    new Chachara.Application({client:client});
+    Backbone.history.start();
   }
 }

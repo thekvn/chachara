@@ -21,12 +21,13 @@ Room.prototype.join = function $join$() {
   this.client.connection.send(elem);
 }
 
-Room.prototype.say = function $say$(what) {
+Room.prototype.say = function $say$(what, callback) {
   // Send a message.
   var elem = (new xmpp.Element('message', { from: this.client.jid, to: this.name, type: 'groupchat' })
                 .c('body')
                 .t(what));
   this.client.connection.send(elem);
+  callback();
 }
 
 Room.prototype.onMessage = function(stanza) {

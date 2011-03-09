@@ -8,16 +8,17 @@ $(function() {
     },
 
     events: {
-      "click button.connect": "onConnect"
+      "click button.connect": "submit"
     },
 
-    onConnect: function(e) {
+    submit: function(e) {
+      e.preventDefault();
+
       var data = {
         jid     : this.$(".jid").val(),
         password: this.$(".password").val()
       }
       this.trigger("connect", data);
-      return false;
     },
 
     render: function() {
