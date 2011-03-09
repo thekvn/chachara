@@ -8,14 +8,12 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     this.options = options;
 
     this.socket = new io.Socket(options.host, { port: options.port});
-    this.socket.connect();
-
     this.bindEvents();
+    this.socket.connect();
   },
   bindEvents: function() {
     var self = this;
 
-    this.socket.connect();
     self.log("Connecting...");
 
     this.socket.on('connect', function() {
