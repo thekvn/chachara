@@ -9,9 +9,9 @@ body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-hei
 .chat-view p { line-height: 1.5em; margin: 0; }
 .chat-view b { display: inline-block; width: 70px; text-align: right; padding-right: 10px; color: #4ECDC4;}
 
-.chat-view .primary-pane { display: block; padding: 10px; height: 500px; overflow: hidden; }
+.chat-view .primary-pane { display: block; padding: 10px; height: 500px; overflow-y: scroll }
 .chat-view .input-pane { }
-.chat-view .secondary-pane { border-bottom: 1px solid #555; height: 30%; display: block; padding: 10px; overflow: hidden; }
+.chat-view .secondary-pane { border-bottom: 1px solid #555; height: 30%; display: block; padding: 10px; overflow-y: scroll; }
 
 .chat-view .input-pane { width: 100%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
 .chat-view .input-pane form { margin: 0;}
