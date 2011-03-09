@@ -6,7 +6,7 @@ $(function() {
       _.bindAll(this, "signin")
     },
 
-    routes: { 
+    routes: {
       "": "signin",
       "chat":"chat"
     },
@@ -19,12 +19,12 @@ $(function() {
 
       this.signinView.bind('connect', function(data) {
         self.client.authenticate(data);
+      });
 
-        self.client.bind("connect-ok", function() {
-          self.signinView.dismiss();
+      self.client.bind("connect-ok", function() {
+        self.signinView.dismiss();
 
-          self.chat();
-        });
+        self.chat();
       });
     },
 
@@ -36,13 +36,14 @@ $(function() {
       chatView = new Chachara.ChatView();
       chatView.render();
 
-      client.join("test@conference.joy.yinkei.com");
+      client.join();
 
       client.bind("message", function(message) {
         chatView.displayMessage(message);
       });
 
       chatView.bind("input", function(data) {
+        data.sid = client.options.sid;
         client.send(data);
       })
     },

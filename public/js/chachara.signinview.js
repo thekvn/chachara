@@ -7,7 +7,7 @@ $(function() {
       _.bindAll(this, 'render');
     },
 
-    events: { 
+    events: {
       "click button.connect": "onConnect"
     },
 
@@ -31,6 +31,7 @@ $(function() {
 
       return this;
     },
+
     dismiss: function() {
       this.$("sign-in-view").remove();
     }

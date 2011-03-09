@@ -88,6 +88,7 @@ socket.on('connection', function(client) {
           client.send( { type: "join-room-ok" } );
 
           room.on("message", function(m) {
+            m["type"] = "message";
             client.send(m);
             room.buffer.push(m);
             if (room.buffer.length > room.bufferSize) room.buffer.shift();
@@ -105,7 +106,7 @@ socket.on('connection', function(client) {
 
   client.on("disconnect", function() {
     if (xmppClient != null && xmppClient.connection != null) {
-      xmppClient.disconnect();
+      // xmppClient.disconnect();
       // delete xmppClient;
       // delete connections[identifier];
     }

@@ -6,11 +6,13 @@ Chachara.Client = function(options) {
 _.extend(Chachara.Client.prototype, Backbone.Events, {
   initialize: function(options) {
     this.options = options;
+    this.sessionCookie = null;
 
     this.socket = new io.Socket(options.host, { port: options.port});
     this.bindEvents();
     this.socket.connect();
   },
+
   bindEvents: function() {
     var self = this;
 
@@ -18,6 +20,7 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
 
     this.socket.on('connect', function() {
       self.log("Connected...");
+      self.reconnect();
       self.trigger('connect');
     });
 
@@ -33,15 +36,28 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
 
   authenticate: function(creds) {
     var data = creds;
-    data["type"] = "connect"
+    data["type"] = "connect";
+    data["sid"]  = this.sessionCookie;
 
     this.send(data);
   },
 
-  join: function(room) {
+  join: function() {
     var data = {
-      type:"join-room",
-      room:room
+      type: "join-room",
+      room: this.options.room
+    }
+    this.send(data);
+  },
+
+  reconnect: function() {
+    if (!this.sessionCookie) {
+      this.sessionCookie = this.getCookie(this.options.sid);
+    }
+
+    var data = {
+      type: 'connect',
+      sid: this.sessionCookie
     }
     this.send(data);
   },
@@ -49,5 +65,17 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
   send: function(data) {
     this.log("[WS] " + data.type);
     this.socket.send(data);
+  },
+
+  // Not sure where to put it.
+  getCookie: function (name) {
+    var cookies = document.cookie.split(";");
+    for (i = 0; i < cookies.length; i++) {
+      x = cookies[i].substr(0, cookies[i].indexOf("="));
+      y = cookies[i].substr(cookies[i].indexOf("=") + 1);
+      x = x.replace(/^\s+|\s+$/g, "");
+      if (x == name)
+        return unescape(y);
+    }
   }
 });
