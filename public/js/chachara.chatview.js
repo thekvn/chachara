@@ -18,7 +18,7 @@ $(function() {
 
     displayMessage: function(message) {
       var fromParts = message.from.split("/");
-      var room = fromParts[0].split(".")[0];
+      var room = fromParts[0].split("@")[0];
       var name = fromParts[1];
       var body = $("<div/>").text(message.body).html();
 
@@ -27,7 +27,7 @@ $(function() {
         .scrollTop(100000);
 
       this.$(".secondary-pane")
-        .append("<p><b><span class='room'>" + room + "</span>:<span class='name'>" + name + "</span></b> " + body + "</p>")
+        .append("<p><b><span class='room'>" + room + "</span> <span class='name'>" + name + "</span></b> " + body + "</p>")
         .scrollTop(100000);
     },
 
