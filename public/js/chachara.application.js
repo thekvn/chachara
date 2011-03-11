@@ -1,13 +1,18 @@
 $(function() {
   Chachara.Application = Backbone.Controller.extend({
-    initialize: function(options) {
-      _.bindAll(this, "signin", "chat");
+    routes: {
+      "": "init",
+      "chat":"chat"
+    },
 
+    initialize: function(options) {
+      _.bindAll(this, "init", "signin", "chat");
       var self = this;
 
       this.client = options.client;
+    },
 
-      // This event should not be preceded by a signin form
+    init: function() {
       this.client.bind("connect-ok", function() {
         console.log("[App] connect-ok Presenting ChatView");
         self.chat();
@@ -36,43 +41,48 @@ $(function() {
       });
     },
 
-    routes: {
-      "": "signin",
-      "chat":"chat"
-    },
-
     signin: function() {
       var self = this;
 
       this.signinView = new Chachara.SigninView();
-
-      this.signinView.bind('connect', function(data) {
-        self.room = data.room;
-        self.client.authenticate(data);
-      });
-
       this.signinView.render();
+      this.signinView.bind('connect', function(data) {
+        self.client.authenticate(data);
+        self.client.bind("connect-ok", function() {
+          console.log("[App] Presenting ChatView");
+          self.chat(data);
+        });
+      });
     },
 
-    chat: function() {
-      var self     = this;
-      var chatView = this.chatView;
-      var client   = this.client;
+    chat: function(chatData) {
+      var self = this;
 
-      chatView = new Chachara.ChatView({room:this.room});
-      chatView.render();
+      this.signinView.dismiss();
+      this.chatViews = {}
 
-      client.join(this.room);
+      this.client.bind("join-room", function(data) {
+        console.log("[App] Creating Room View for: "+data.room);
 
-      client.bind("message", function(message) {
-        chatView.displayMessage(message);
+        var room    = data.room;
+        var newView = new Chachara.ChatView({room:room, el:$("#app")[0]});
+        newView.render();
+
+        newView.bind("input", function(data) {
+          data.sid = self.client.options.sid;
+          self.client.send(data);
+        });
+
+        self.client.bind("message", function(message) {
+          newView.displayMessage(message);
+        });
+
+        self.chatViews[room] = newView;
       });
 
-      chatView.bind("input", function(data) {
-        data.sid = client.options.sid;
-        console.log(data.room);
-        client.send(data);
-      })
+      _(chatData.rooms).each(function(r) {
+        self.client.join(r);
+      });
     },
   });
 });

@@ -52,6 +52,7 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
       room: room
     }
     this.send(data);
+    this.trigger("join-room", {room:room});
   },
 
   reconnect: function() {

@@ -85,6 +85,7 @@ socket.on('connection', function(client) {
         var room = xmppClient.rooms[message.room];
         room.on("message", function(m) {
           m["type"] = "message";
+          m["room"] = message.room;
           client.send(m);
           room.buffer.push(m);
           if (room.buffer.length > room.bufferSize) room.buffer.shift();
@@ -102,6 +103,7 @@ socket.on('connection', function(client) {
 
           room.on("message", function(m) {
             m["type"] = "message";
+            m["room"] = message.room;
             client.send(m);
             room.buffer.push(m);
             if (room.buffer.length > room.bufferSize) room.buffer.shift();

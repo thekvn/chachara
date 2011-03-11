@@ -17,7 +17,7 @@ $(function() {
       var data = {
         jid:      this.$(".jid").val(),
         password: this.$(".password").val(),
-        room:     this.$(".room").val()
+        rooms:    this.$(".rooms").val().split(",")
       }
       this.trigger("connect", data);
     },
@@ -35,7 +35,7 @@ $(function() {
     },
 
     dismiss: function() {
-      this.$("sign-in-view").remove();
+      this.$(".signin-view").remove();
     }
   });
 });
