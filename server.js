@@ -61,23 +61,23 @@ socket.on('connection', function(client) {
       setXmppClient(message.sid);
 
       if (xmppClient.connection == null) {
-
-        // Trying to authenticate for the first time
-        if (message.jid != undefined) {
-          xmppClient.connect(message.jid, message.password, function() {
-            connections[identifier] = xmppClient;
-            client.send( { type:"connect-ok" } );
-          });
-
-        // Trying to reconnect but there is no connection
-        } else {
-          client.send( { type:"connect-not-ok" } );
-        }
-
+        client.send( { type:"connect-not-ok" } );
       } else {
-        // Got existing connection
         client.send( { type:"connect-ok" } );
       }
+    }
+
+    if (message.type == 'auth') {
+      setXmppClient(message.sid);
+
+      xmppClient.connect(message.jid, message.password, function(err) {
+        if (err) {
+          client.send( { type:"auth-not-ok" } );
+        } else {
+          connections[identifier] = xmppClient;
+          client.send( { type:"auth-ok" } );
+        }
+      });
     }
 
     if (message.type == "join-room") {

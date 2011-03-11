@@ -7,13 +7,26 @@ $(function() {
 
       this.client = options.client;
 
+      // This event should not be preceded by a signin form
       this.client.bind("connect-ok", function() {
-        console.log("[App] Presenting ChatView");
+        console.log("[App] connect-ok Presenting ChatView");
+        self.chat();
+      });
+
+      this.client.bind("auth-ok", function() {
+        console.log("[App] auth-ok Presenting ChatView");
         self.chat();
       });
 
       this.client.bind("connect-not-ok", function() {
-        console.log("[App] Presenting Signin Form")
+        console.log("[App] connect-not-ok Presenting Signin Form")
+        self.signin();
+      });
+
+      // I think that this particular event should show the user something
+      // like: authentication failure
+      this.client.bind("auth-not-ok", function() {
+        console.log("[App] auth-not-ok Presenting Signin Form")
         self.signin();
       });
 

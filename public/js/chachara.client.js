@@ -40,7 +40,7 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
 
   authenticate: function(creds) {
     var data = creds;
-    data["type"] = "connect";
+    data["type"] = "auth";
     data["sid"]  = this.sessionCookie;
 
     this.send(data);

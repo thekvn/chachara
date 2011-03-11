@@ -23,6 +23,11 @@ Client.prototype.connect = function(jid, password, callback) {
 
   self.connection.on('online', onOnline);
 
+  self.connection.on('error', function(e) {
+    if (e == 'XMPP authentication failure') callback(e);
+    else console.log(err);
+  });
+
   function onOnline() {
     self.connection.on('stanza', onStanza);
 
@@ -58,6 +63,10 @@ Client.prototype.connect = function(jid, password, callback) {
         self.rooms[room]['onPresence'] && self.rooms[room].onPresence(stanza);
       }
     }
+  }
+
+  function onAuthFailure(){
+
   }
 
   // Connect to XMPP.
