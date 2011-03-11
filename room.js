@@ -32,7 +32,7 @@ Room.prototype.say = function $say$(what, callback) {
 }
 
 // Server is not sending member list
-Room.prototype.members = function $members$() {
+Room.prototype.onPresence = function $members$() {
   iqAttrs = {
     from: this.client.jid,
     id: this.client.nick,
@@ -55,15 +55,14 @@ Room.prototype.onMessage = function(stanza) {
   });
 }
 
-Room.prototype.onMember = function(stanza) {
+Room.prototype.onPresence = function(stanza) {
   var status = stanza.attrs.type == "unavailable"
                               ? "offline"
                               : "online"
 
-  this.emit("member", {
+  this.emit("presence", {
     to:     stanza.attrs.to,
     from:   stanza.attrs.from,
-    nick:    stanza.attrs.from.split("/")[1],
     status: status
   });
 }

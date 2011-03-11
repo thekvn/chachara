@@ -55,7 +55,7 @@ Client.prototype.connect = function(jid, password, callback) {
       var nick = fromParts[1];
 
       if (self.rooms[room]) {
-        self.rooms[room]['onMember'] && self.rooms[room].onMember(stanza);
+        self.rooms[room]['onPresence'] && self.rooms[room].onPresence(stanza);
       }
     }
   }
