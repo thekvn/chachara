@@ -13,15 +13,7 @@ $(function() {
     },
 
     init: function() {
-      this.client.bind("connect-ok", function() {
-        console.log("[App] connect-ok Presenting ChatView");
-        self.chat();
-      });
-
-      this.client.bind("auth-ok", function() {
-        console.log("[App] auth-ok Presenting ChatView");
-        self.chat();
-      });
+      var self = this;
 
       this.client.bind("connect-not-ok", function() {
         console.log("[App] connect-not-ok Presenting Signin Form")
@@ -46,9 +38,10 @@ $(function() {
 
       this.signinView = new Chachara.SigninView();
       this.signinView.render();
+
       this.signinView.bind('connect', function(data) {
         self.client.authenticate(data);
-        self.client.bind("connect-ok", function() {
+        self.client.bind("auth-ok", function() {
           console.log("[App] Presenting ChatView");
           self.chat(data);
         });
@@ -57,6 +50,7 @@ $(function() {
 
     chat: function(chatData) {
       var self = this;
+      console.dir(chatData);
 
       this.signinView.dismiss();
       this.chatViews = {}
