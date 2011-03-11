@@ -3,7 +3,7 @@
   <head>
     <title>Ch&aacute;chara</title>
     <link rel="stylesheet" type="text/css" href="/css/app.css" />
-    <script src="http://127.0.0.1:8080/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="/js/lib/jquery-1.5.1.js"></script>
     <script src="/js/lib/underscore.js"></script>
     <script src="/js/lib/backbone.js"></script>
@@ -12,7 +12,11 @@
     <script src="/js/chachara.signinview.js"></script>
     <script src="/js/chachara.chatview.js"></script>
     <script src="/js/chachara.application.js"></script>
-    <script src="/js/app.js"></script>
+    <script type="text/javascript">
+    $(function() {
+      Chachara.run();
+    });
+    </script>
   </head>
 
   <script type="template" id="signin-view-template">
