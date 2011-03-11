@@ -23,12 +23,16 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
       self.reconnect();
     });
 
+    // TODO
+    // This shouldn't actually redirect to the signin view but to a 'lost con-
+    // nection to the server' page.
     this.socket.on('disconnect', function() {
       self.log("Disconnected...");
       self.trigger('disconnect');
     });
 
     this.socket.on('message', function(message) {
+      console.log(message);
       self.log("Received [" + message.type + "]");
       self.trigger(message.type, message)
     });

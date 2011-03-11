@@ -63,7 +63,15 @@ socket.on('connection', function(client) {
       if (xmppClient.connection == null) {
         client.send( { type:"connect-not-ok" } );
       } else {
-        client.send( { type:"connect-ok" } );
+        var rooms = [];
+        for (roomName in xmppClient.rooms) {
+          rooms.push(roomName);
+        }
+
+        client.send({
+          type:"connect-ok",
+          rooms: rooms
+        });
       }
     }
 

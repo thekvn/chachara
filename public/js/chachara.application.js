@@ -27,6 +27,11 @@ $(function() {
         self.signin();
       });
 
+      this.client.bind("connect-ok", function(connectData) {
+        console.log("[App] connect-ok Presenting ChatView");
+        self.chat(connectData);
+      });
+
       this.client.bind("disconnect", function() {
         console.log("[App] Disconnected, Presenting Signin Form")
         self.signin();
@@ -52,7 +57,7 @@ $(function() {
       var self = this;
       console.dir(chatData);
 
-      this.signinView.dismiss();
+      if (this.signinView) this.signinView.dismiss();
       this.chatViews = {}
 
       this.client.bind("join-room", function(data) {
