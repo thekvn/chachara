@@ -10,6 +10,8 @@ body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-hei
 .chat-view b { display: inline-block; width: 70px; text-align: right; padding-right: 10px; }
 .chat-view span.name { color: #4ECDC4; }
 
+.chat-view .presence { font-style: italic; color: #555; }
+
 .chat-view .primary-pane { display: block; padding: 10px; height: 500px; overflow-y: scroll }
 .chat-view .input-pane { }
 
@@ -20,8 +22,10 @@ body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-hei
 .chat-view .secondary-pane span.name { color: #C44D58; }
 
 .chat-view .input-pane { width: 100%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
-.chat-view .input-pane form { margin: 0;}
-.chat-view .input-pane input { padding: 5px; width: 100%; background: #111; border: none; color: #FFF; }
+.chat-view .input-pane span.current { display: inline-block; width: 80px; text-align: right;}
+.chat-view .input-pane form { margin: 0; display: inline-block; }
+.chat-view .input-pane input { padding: 5px; background: #111; border: none; width: 500px;; color: #FFF; }
+.chat-view .input-pane input:focus { outline: 0 none; }
 
 .signin-view {
   width: 400px;

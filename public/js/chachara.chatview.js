@@ -5,7 +5,8 @@ $(function() {
     initialize: function(options) {
       _.bindAll(this, "render", "onInput", "displayMessage");
 
-      this.id = "pane-" + options.room.split("@")[0];
+      this.shortname = options.room.split("@")[0];
+      this.id = "pane-" + this.shortname;
       this.node = "#" + this.id;
     },
 
@@ -13,6 +14,7 @@ $(function() {
       var template = $(this.template()).attr("id", this.id);
       $(this.el).append(template);
 
+      $(this.node).find("span.current").text("#"+this.shortname);
       $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
       $(this.node).find(".primary-pane").append("<p>Joined " + this.options.room + "</p>")
@@ -20,6 +22,8 @@ $(function() {
 
     show: function() {
       $(this.node).show();
+      $(this.node).find(".primary-pane").scrollTop(100000);
+      $(this.node).find(".secondary-pane").scrollTop(100000);
       $(this.node).find(".chatinput").focus();
     },
 
@@ -27,9 +31,21 @@ $(function() {
       $(this.node).hide();
     },
 
+    displayPresence: function(data) {
+      console.dir(data)
+      var fromParts = data.from.split("/");
+      var room      = fromParts[0];
+      var who       = fromParts[1];
+      var status    = data.status
+
+      if (this.options.room === room) {
+         $(this.node).find(".primary-pane")
+           .append("<p class='presence'><b><span class='name'>" + who + "</span></b> went " + status + "</p>")
+           .scrollTop(100000);
+      }
+    },
     displayMessage: function(message) {
       var fromParts = message.from.split("/");
-
       var room = fromParts[0].split("@")[0];
       var name = fromParts[1];
       var body = $("<div/>").text(message.body).html();

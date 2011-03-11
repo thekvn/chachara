@@ -90,7 +90,6 @@ socket.on('connection', function(client) {
 
     if (message.type == "join-room") {
       xmppClient.join(message.room, function(room) {
-
         // Send buffered lists for UI reconstruction
         room.buffer.forEach(function(m){
           client.send(m);

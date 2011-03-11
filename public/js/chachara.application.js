@@ -6,11 +6,10 @@ $(function() {
     },
 
     initialize: function(options) {
-      _(this).bind("init", "signin", "chat");
+      _(this).bind("init", "signin", "chat", "createRoomView");
 
       this.client    = options.client;
       this.chatViews = {}
-      this.activeChatView = null;
     },
 
     init: function() {
@@ -22,6 +21,8 @@ $(function() {
       });
 
       // I think that this particular event should show the user something
+      // k
+      //
       // like: authentication failure
       this.client.bind("auth-not-ok", function() {
         console.log("[App] auth-not-ok Presenting Signin Form")
@@ -30,7 +31,10 @@ $(function() {
 
       this.client.bind("connect-ok", function(connectData) {
         console.log("[App] connect-ok Presenting ChatView");
-        self.chat(connectData);
+        _(connectData.rooms).each(function(room) {
+          console.log("[App] Server Gave Rooms: -> " + room);
+          self.createRoomView(room);
+        })
       });
 
       this.client.bind("disconnect", function() {
@@ -51,6 +55,7 @@ $(function() {
           console.log("[App] Authentication Successful");
           console.log("[App] Initiating Chat");
           self.signinView.dismiss();
+          data["do-join"] = true;
           self.chat(data);
         });
       });
@@ -60,59 +65,71 @@ $(function() {
       var self = this;
 
       this.client.bind("join-room", function(data) {
-        console.log("[App] Creating Room View for: "+data.room);
-
-        var room    = data.room;
-        var newView = new Chachara.ChatView({room:room, el:$("#app")[0]});
-        newView.render();
-
-        newView.bind("input", function(data) {
-          data.sid = self.client.options.sid;
-          self.client.send(data);
-        });
-
-        newView.bind("nextpane", function(current) {
-          var views = _(self.chatViews).toArray();
-          var currentIndex = views.indexOf(current);
-          currentIndex = currentIndex + 1;
-
-          if (currentIndex < views.length) {
-            _(views).each(function(view) {
-              view.hide();
-            });
-            views[currentIndex].show();
-          }
-        });
-
-        newView.bind("prevpane", function(current) {
-          var views = _(self.chatViews).toArray();
-          var currentIndex = views.indexOf(current);
-          currentIndex = currentIndex - 1;
-
-          if (currentIndex >= 0) {
-            _(views).each(function(view) {
-              view.hide();
-            });
-            views[currentIndex].show();
-          }
-        });
-
-        self.client.bind("message", function(message) {
-          newView.displayMessage(message);
-        });
-
-
-        _(self.chatViews.values).each(function(v) {
-          v.hide();
-        });
-
-        self.chatViews[room] = newView;
-        newView.show();
+        self.createRoomView(data.room);
       });
 
-      _(chatData.rooms).each(function(r) {
-        self.client.join(r);
-      });
+      if (chatData["do-join"]) {
+        _(chatData.rooms).each(function(room) {
+          self.client.join(room);
+        });
+      }
     },
-  });
+    createRoomView: function(room) {
+      console.log("[App] Create Room View -> "+room);
+      var self    = this;
+      var room    = room;
+
+      var newView = new Chachara.ChatView({room:room, el:$("#app")[0]});
+
+      newView.render();
+
+      newView.bind("input", function(data) {
+        data.sid = self.client.options.sid;
+        self.client.send(data);
+      });
+
+      newView.bind("nextpane", function(current) {
+        var views = _(self.chatViews).toArray();
+        var currentIndex = views.indexOf(current);
+        currentIndex = currentIndex + 1;
+
+        if (currentIndex < views.length) {
+          console.log("[App] Next Pane");
+          _(views).each(function(view) {
+            view.hide();
+          });
+          views[currentIndex].show();
+        }
+      });
+
+      newView.bind("prevpane", function(current) {
+        var views = _(self.chatViews).toArray();
+        var currentIndex = views.indexOf(current);
+        currentIndex = currentIndex - 1;
+
+        if (currentIndex >= 0) {
+          console.log("[App] Previous Pane");
+          _(views).each(function(view) {
+            view.hide();
+          });
+          views[currentIndex].show();
+        }
+      });
+
+      this.client.bind("message", function(message) {
+        newView.displayMessage(message);
+      });
+
+      this.client.bind("presence", function(message) {
+        newView.displayPresence(message);
+      });
+
+      _(this.chatViews.values).each(function(v) {
+        v.hide();
+      });
+
+      this.chatViews[room] = newView;
+      newView.show();
+    }
+  })
 });

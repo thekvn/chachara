@@ -5,6 +5,7 @@ Chachara.Client = function(options) {
 
 _.extend(Chachara.Client.prototype, Backbone.Events, {
   initialize: function(options) {
+    _.bindAll(this, "bindEvents");
     this.options = options;
     this.sessionCookie = null;
 
@@ -32,7 +33,6 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     });
 
     this.socket.on('message', function(message) {
-      console.log(message);
       self.log("Received [" + message.type + "]");
       self.trigger(message.type, message)
     });
