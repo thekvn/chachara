@@ -89,8 +89,17 @@ socket.on('connection', function(client) {
     }
 
     if (message.type == "join-room") {
-      if (xmppClient.rooms[message.room]) {
-        var room = xmppClient.rooms[message.room];
+      xmppClient.join(message.room, function(room) {
+
+        // Send buffered lists for UI reconstruction
+        room.buffer.forEach(function(m){
+          client.send(m);
+        });
+
+        room.participants.forEach(function(m){
+          client.send(m);
+        });
+
         room.on("message", function(m) {
           m["type"] = "message";
           m["room"] = message.room;
@@ -98,37 +107,14 @@ socket.on('connection', function(client) {
           room.buffer.push(m);
           if (room.buffer.length > room.bufferSize) room.buffer.shift();
         })
-        while ((m = room.buffer.shift()) != undefined){
+
+        room.on("presence", function(m) {
+          m["type"] = "presence";
           client.send(m);
-        }
+          room.participants.push(m);
+        })
 
-      } else {
-        xmppClient.join(message.room, function(room) {
-          client.send({
-            type: "join-room-ok",
-            room: room.name
-          });
-
-          room.on("message", function(m) {
-            m["type"] = "message";
-            m["room"] = message.room;
-            client.send(m);
-            room.buffer.push(m);
-            if (room.buffer.length > room.bufferSize) room.buffer.shift();
-          })
-
-          room.on("presence", function(m) {
-            m["type"] = "presence";
-            client.send(m);
-
-            if (m.status == "offline") {
-              console.log(m.from.split("/")[1] + " just joined room " + room.name);
-            } else {
-              console.log(m.from.split("/")[1] + " just joined room " + room.name);
-            }
-          })
-        });
-      }
+      });
     }
 
     if (message.type == "message") {

@@ -71,10 +71,12 @@ Client.prototype.connect = function(jid, password, callback) {
 
   // Connect to XMPP.
   Client.prototype.join = function(name, callback) {
-    var room = this.rooms[name] = new Room (this, name);
-    room.join();
-    callback(room);
-    return room;
+    if (this.rooms[name] == undefined) {
+      this.rooms[name] = new Room (this, name);
+      this.rooms[name].join();
+    }
+
+    callback(this.rooms[name]);
   }
 
   Client.prototype.disconnect = function() {
