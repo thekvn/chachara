@@ -1,9 +1,6 @@
 $(function() {
   Chachara.ChatView = Backbone.View.extend({
     template: _.template($("#chat-view-template").html()),
-    events: {
-      "keypress .chatinput": "onInput"
-    },
 
     initialize: function(options) {
       _.bindAll(this, "render", "onInput", "displayMessage");
@@ -16,8 +13,18 @@ $(function() {
       var template = $(this.template()).attr("id", this.id);
       $(this.el).append(template);
 
+      $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
       $(this.node).find(".primary-pane").append("<p>Joined " + this.options.room + "</p>")
+    },
+
+    show: function() {
+      $(this.node).show();
+      $(this.node).find(".chatinput").focus();
+    },
+
+    hide: function() {
+      $(this.node).hide();
     },
 
     displayMessage: function(message) {
@@ -41,19 +48,26 @@ $(function() {
 
     onInput: function(e) {
       if (e.which == '13') {
-
         var str = $(e.target).val();
-
         if (str.length > 0) {
           var data = {
             type: "message",
             body: str,
             room: this.options.room
           };
-
           this.trigger("input", data);
           $(this.node).find(".chatinput").val("");
         }
+      }
+
+      if (e.ctrlKey && e.which == '44') { /* < */
+        e.stopPropagation();
+        this.trigger("prevpane", this);
+      }
+
+      if (e.ctrlKey && e.which == '46') { /* > */
+        e.stopPropagation();
+        this.trigger("nextpane", this);
       }
     },
   })

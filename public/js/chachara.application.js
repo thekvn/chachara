@@ -10,6 +10,7 @@ $(function() {
 
       this.client    = options.client;
       this.chatViews = {}
+      this.activeChatView = null;
     },
 
     init: function() {
@@ -70,11 +71,43 @@ $(function() {
           self.client.send(data);
         });
 
+        newView.bind("nextpane", function(current) {
+          var views = _(self.chatViews).toArray();
+          var currentIndex = views.indexOf(current);
+          currentIndex = currentIndex + 1;
+
+          if (currentIndex < views.length) {
+            _(views).each(function(view) {
+              view.hide();
+            });
+            views[currentIndex].show();
+          }
+        });
+
+        newView.bind("prevpane", function(current) {
+          var views = _(self.chatViews).toArray();
+          var currentIndex = views.indexOf(current);
+          currentIndex = currentIndex - 1;
+
+          if (currentIndex >= 0) {
+            _(views).each(function(view) {
+              view.hide();
+            });
+            views[currentIndex].show();
+          }
+        });
+
         self.client.bind("message", function(message) {
           newView.displayMessage(message);
         });
 
+
+        _(self.chatViews.values).each(function(v) {
+          v.hide();
+        });
+
         self.chatViews[room] = newView;
+        newView.show();
       });
 
       _(chatData.rooms).each(function(r) {
