@@ -23,6 +23,11 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
       self.reconnect();
     });
 
+    this.socket.on('disconnect', function() {
+      self.log("Disconnected...");
+      self.trigger('disconnect');
+    });
+
     this.socket.on('message', function(message) {
       self.log("Received [" + message.type + "]");
       self.trigger(message.type, message)

@@ -16,6 +16,11 @@ $(function() {
         console.log("[App] Presenting Signin Form")
         self.signin();
       });
+
+      this.client.bind("disconnect", function() {
+        console.log("[App] Disconnected, Presenting Signin Form")
+        self.signin();
+      });
     },
 
     routes: {
