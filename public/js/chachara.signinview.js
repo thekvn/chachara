@@ -15,8 +15,9 @@ $(function() {
       e.preventDefault();
 
       var data = {
-        jid     : this.$(".jid").val(),
-        password: this.$(".password").val()
+        jid:      this.$(".jid").val(),
+        password: this.$(".password").val(),
+        room:     this.$(".room").val()
       }
       this.trigger("connect", data);
     },

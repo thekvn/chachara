@@ -3,7 +3,6 @@ var Chachara = {
     var client = new Chachara.Client({
       host: window.location.hostname,
       port: window.location.port,
-      room: "test@conference.joy.yinkei.com",
       useNotifications: false,
       sid: "chachara.sid"
     });

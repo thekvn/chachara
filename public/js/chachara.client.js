@@ -41,10 +41,10 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     this.send(data);
   },
 
-  join: function() {
+  join: function(room) {
     var data = {
       type: "join-room",
-      room: this.options.room
+      room: room
     }
     this.send(data);
   },

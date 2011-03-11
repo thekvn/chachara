@@ -29,6 +29,7 @@ $(function() {
       this.signinView = new Chachara.SigninView();
 
       this.signinView.bind('connect', function(data) {
+        self.room = data.room;
         self.client.authenticate(data);
       });
 
@@ -40,10 +41,10 @@ $(function() {
       var chatView = this.chatView;
       var client   = this.client;
 
-      chatView = new Chachara.ChatView();
+      chatView = new Chachara.ChatView({room:this.room});
       chatView.render();
 
-      client.join();
+      client.join(this.room);
 
       client.bind("message", function(message) {
         chatView.displayMessage(message);
@@ -51,6 +52,7 @@ $(function() {
 
       chatView.bind("input", function(data) {
         data.sid = client.options.sid;
+        console.log(data.room);
         client.send(data);
       })
     },
