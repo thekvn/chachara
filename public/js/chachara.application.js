@@ -6,10 +6,10 @@ $(function() {
     },
 
     initialize: function(options) {
-      _.bindAll(this, "init", "signin", "chat");
-      var self = this;
+      _(this).bind("init", "signin", "chat");
 
-      this.client = options.client;
+      this.client    = options.client;
+      this.chatViews = {}
     },
 
     init: function() {
@@ -44,10 +44,12 @@ $(function() {
       this.signinView = new Chachara.SigninView();
       this.signinView.render();
 
-      this.signinView.bind('connect', function(data) {
+      this.signinView.bind('submit', function(data) {
         self.client.authenticate(data);
         self.client.bind("auth-ok", function() {
-          console.log("[App] Presenting ChatView");
+          console.log("[App] Authentication Successful");
+          console.log("[App] Initiating Chat");
+          self.signinView.dismiss();
           self.chat(data);
         });
       });
@@ -55,10 +57,6 @@ $(function() {
 
     chat: function(chatData) {
       var self = this;
-      console.dir(chatData);
-
-      if (this.signinView) this.signinView.dismiss();
-      this.chatViews = {}
 
       this.client.bind("join-room", function(data) {
         console.log("[App] Creating Room View for: "+data.room);
