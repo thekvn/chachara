@@ -1,4 +1,5 @@
 var express = require("express"),
+    os   = require("os"),
     io   = require("socket.io"),
     connect = require('connect'),
     util = require("util");
@@ -32,8 +33,11 @@ app.get("/", function(req, res) {
   res.render("index.ejs");
 });
 
-app.listen(8080);
-
+if (os.hostname().match(/\w\.no\.de$/)) {
+  app.listen(80);
+} else {
+  app.listen(8080);
+}
 
 var socket = io.listen(app),
     connections = {};
