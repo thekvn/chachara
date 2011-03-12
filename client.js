@@ -2,8 +2,10 @@ var sys = require("sys"),
    xmpp = require("node-xmpp"),
    Room = require("./room.js");
 
-function Client() {
+// Make client instances store a reference to its websocket client
+function Client(websocket) {
   this.connection = null;
+  this.websocket  = websocket;
 }
 
 Client.prototype.connect = function(jid, password, callback) {

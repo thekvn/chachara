@@ -48,7 +48,7 @@ Room.prototype.onPresence = function $members$() {
 }
 
 Room.prototype.onMessage = function(stanza) {
-  this.emit("message", {
+  this.emit("message", this.client.websocket, {
     to:   stanza.attrs.to,
     from: stanza.attrs.from,
     body: stanza.getChild("body").getText()
@@ -60,7 +60,7 @@ Room.prototype.onPresence = function(stanza) {
                               ? "offline"
                               : "online"
 
-  this.emit("presence", {
+  this.emit("presence", this.client.websocket, {
     to:     stanza.attrs.to,
     from:   stanza.attrs.from,
     status: status

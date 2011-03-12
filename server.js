@@ -43,19 +43,16 @@ var socket = io.listen(app),
     connections = {};
 
 var handlers = ['onConnect', 'onAuth', 'onJoinRoom', 'onMessage'];
-
 var events = {
 
-  onConnect: function(xmppClient){
-    var client = this;
-
+  onConnect: function(xmppClient, callback){
     if (xmppClient.connection == null) {
-      client.send( { type:"connect-not-ok" } );
+      callback( { type:"connect-not-ok" } );
     } else {
       var rooms = [];
       for (roomName in xmppClient.rooms) rooms.push(roomName);
 
-      client.send({
+      callback({
         type:"connect-ok",
         rooms: rooms
       });
@@ -65,60 +62,64 @@ var events = {
 
         // Send buffered lists for UI reconstruction
         room.buffer.forEach(function(m){
-          client.send(m);
+          callback(m);
         });
 
         room.participants.forEach(function(m){
-          client.send(m);
+          callback(m);
         });
       });
     }
   },
 
-  onAuth: function(xmppClient, identifier, message){
-    var client = this;
-
+  onAuth: function(xmppClient, identifier, message, callback){
     xmppClient.connect(message.jid, message.password, function(err) {
       if (err) {
-        client.send( { type:"auth-not-ok" } );
+        callback( { type:"auth-not-ok" } );
       } else {
         connections[identifier] = xmppClient;
-        client.send( { type:"auth-ok" } );
+        callback( { type:"auth-ok" } );
       }
     });
   },
 
-  onJoinRom: function(xmppClient, message){
-    var client = this;
-
+  onJoinRom: function(xmppClient, message, callback){
     xmppClient.join(message.room, function(room) {
-      room.on("message", function(m) {
-        m["type"] = "message";
-        m["room"] = message.room;
-        client.send(m);
-        room.buffer.push(m);
+
+      // Main reason for the workaround in renewing the websocket and making
+      // it a property of the xmpp client instance is because I yet haven't
+      // figured out how to have access to the client inside these event
+      // handlers definition 'dynamic' so it always has access to the latest
+      // client that is given on socket.onConnection
+      room.on("message", function(websocket, msg) {
+        msg.type = "message";
+        msg.room = room.name;
+        room.buffer.push(msg);
         if (room.buffer.length > room.bufferSize) room.buffer.shift();
+
+        websocket.send(msg);
       })
 
-      room.on("presence", function(m) {
-        m["type"] = "presence";
-        client.send(m);
-        room.participants.push(m);
+      room.on("presence", function(websocket, msg) {
+        msg.type = "presence";
+        room.participants.push(msg);
+
+        websocket.send(msg);
       })
 
     });
   },
 
-  onMessage: function(xmppClient, message){
-    var client = this;
+  onMessage: function(xmppClient, message, callback){
+    // inspect("iiii");
+    // inspect(client.sessionId);
 
     xmppClient.rooms[message.room].say(message.body, function() {
-      client.send({type:"message-ok"});
+      callback({type:"message-ok"});
     });
   },
 
 }
-
 
 
 socket.on('connection', function(client) {
@@ -129,9 +130,21 @@ socket.on('connection', function(client) {
   function getXmppClient(cookie){
     identifier = cookie || client.sessionId;
 
-    xmppClient = connections[identifier]
-               ? connections[identifier]
-               : new Client();
+    // xmppClient = connections[identifier]
+    //            ? connections[identifier]
+    //            : new Client();
+
+    // Renew the websocket assigned to the xmpp client
+    if (connections[identifier]) {
+      xmppClient = connections[identifier];
+      xmppClient.websocket = client;
+    } else {
+      xmppClient = new Client(client);
+    }
+  }
+
+  function sendMessage(message) {
+    client.send(message);
   }
 
   client.on("message", function(message) {
@@ -139,16 +152,16 @@ socket.on('connection', function(client) {
 
     switch(message.type) {
     case 'connect':
-      events.onConnect.call(client, xmppClient);
+      events.onConnect(xmppClient, sendMessage);
       break;
     case 'auth':
-      events.onAuth.call(client, xmppClient, identifier, message);
+      events.onAuth(xmppClient, identifier, message, sendMessage);
       break;
     case 'join-room':
-      events.onJoinRom.call(client, xmppClient, message);
+      events.onJoinRom(xmppClient, message, sendMessage);
       break;
     case 'message':
-      events.onMessage.call(client, xmppClient, message);
+      events.onMessage(xmppClient, message, sendMessage);
       break;
     default:
       console.log("Unknown message received.");
