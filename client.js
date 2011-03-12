@@ -71,11 +71,9 @@ Client.prototype.connect = function(jid, password, callback) {
 
   // Connect to XMPP.
   Client.prototype.join = function(name, callback) {
-    if (this.rooms[name] == undefined) {
-      this.rooms[name] = new Room (this, name);
-      this.rooms[name].join();
-    }
-
+    // No strict checking at the moment
+    this.rooms[name] = new Room(this, name);
+    this.rooms[name].join();
     callback(this.rooms[name]);
   }
 

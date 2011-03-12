@@ -64,13 +64,24 @@ socket.on('connection', function(client) {
         client.send( { type:"connect-not-ok" } );
       } else {
         var rooms = [];
-        for (roomName in xmppClient.rooms) {
-          rooms.push(roomName);
-        }
+        for (roomName in xmppClient.rooms) rooms.push(roomName);
 
         client.send({
           type:"connect-ok",
           rooms: rooms
+        });
+
+        Object.keys(xmppClient.rooms).forEach(function(roomName) {
+          var room = xmppClient.rooms[roomName];
+
+          // Send buffered lists for UI reconstruction
+          room.buffer.forEach(function(m){
+            client.send(m);
+          });
+
+          room.participants.forEach(function(m){
+            client.send(m);
+          });
         });
       }
     }
@@ -90,15 +101,6 @@ socket.on('connection', function(client) {
 
     if (message.type == "join-room") {
       xmppClient.join(message.room, function(room) {
-        // Send buffered lists for UI reconstruction
-        room.buffer.forEach(function(m){
-          client.send(m);
-        });
-
-        room.participants.forEach(function(m){
-          client.send(m);
-        });
-
         room.on("message", function(m) {
           m["type"] = "message";
           m["room"] = message.room;
