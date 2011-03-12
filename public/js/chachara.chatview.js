@@ -39,8 +39,9 @@ $(function() {
       var status    = data.status
 
       if (this.options.room === room) {
+        userAction = (status == "online") ? "joined" : "left";
          $(this.node).find(".primary-pane")
-           .append("<p class='presence'><b><span class='name'>" + who + "</span></b> went " + status + "</p>")
+           .append("<p class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " room</p>")
            .scrollTop(100000);
       }
     },
