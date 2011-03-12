@@ -32,16 +32,15 @@ $(function() {
     },
 
     displayPresence: function(data) {
-      console.dir(data)
       var fromParts = data.from.split("/");
       var room      = fromParts[0];
       var who       = fromParts[1];
       var status    = data.status
 
       if (this.options.room === room) {
-        userAction = (status == "online") ? "joined" : "left";
-         $(this.node).find(".primary-pane")
-           .append("<p class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " room</p>")
+        var userAction = (status == "online") ? "joined" : "left";
+        $(this.node).find(".primary-pane")
+           .append("<p class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</p>")
            .scrollTop(100000);
       }
     },
