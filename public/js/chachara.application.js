@@ -9,7 +9,9 @@ $(function() {
       _(this).bind("init", "signin", "chat", "createRoomView");
 
       this.client    = options.client;
-      this.chatViews = {}
+      this.chatViews = {};
+      this.useNotifications = false;
+      this.nick = null;
     },
 
     init: function() {
@@ -41,6 +43,10 @@ $(function() {
         console.log("[App] Disconnected, Presenting Signin Form")
         self.signin();
       });
+
+      this.client.bind("message", function(message) {
+        self.displayNotification(message);
+      });
     },
 
     signin: function() {
@@ -51,10 +57,12 @@ $(function() {
 
       this.signinView.bind('submit', function(data) {
         self.client.authenticate(data);
+        self.enableNotifications();
         self.client.bind("auth-ok", function() {
           console.log("[App] Authentication Successful");
           console.log("[App] Initiating Chat");
           self.signinView.dismiss();
+          self.nick = data.jid.split("@")[0];
           data["do-join"] = true;
           self.chat(data);
         });
@@ -74,6 +82,7 @@ $(function() {
         });
       }
     },
+
     createRoomView: function(room) {
       console.log("[App] Create Room View -> "+room);
       var self    = this;
@@ -129,6 +138,24 @@ $(function() {
 
       this.chatViews[room] = newView;
       newView.show();
+    },
+
+    enableNotifications: function(){
+      var self = this;
+
+      function permissionGranted(){ self.useNotifications = true; }
+      window.webkitNotifications.requestPermission(permissionGranted);
+    },
+
+    displayNotification: function(message) {
+      if (window.webkitNotifications.checkPermission() == 0) {
+        if (message.body.indexOf(this.nick) != -1 && message.from.indexOf(this.nick) == -1) {
+          var n = window.webkitNotifications.createNotification('', message.from, message.body);
+          n.show();
+          setTimeout(function(){n.cancel()}, 5000);
+        }
+      }
     }
+
   })
 });

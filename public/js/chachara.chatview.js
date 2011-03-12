@@ -44,6 +44,7 @@ $(function() {
            .scrollTop(100000);
       }
     },
+
     displayMessage: function(message) {
       var fromParts = message.from.split("/");
       var room = fromParts[0].split("@")[0];
@@ -85,6 +86,6 @@ $(function() {
         e.stopPropagation();
         this.trigger("nextpane", this);
       }
-    },
+    }
   })
 });
