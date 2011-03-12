@@ -84,7 +84,6 @@ $(function() {
       newView.render();
 
       newView.bind("input", function(data) {
-        data.sid = self.client.options.sid;
         self.client.send(data);
       });
 

@@ -42,12 +42,91 @@ if (os.hostname().match(/\w\.no\.de$/)) {
 var socket = io.listen(app),
     connections = {};
 
+var handlers = ['onConnect', 'onAuth', 'onJoinRoom', 'onMessage'];
+
+var events = {
+
+  onConnect: function(xmppClient){
+    var client = this;
+
+    if (xmppClient.connection == null) {
+      client.send( { type:"connect-not-ok" } );
+    } else {
+      var rooms = [];
+      for (roomName in xmppClient.rooms) rooms.push(roomName);
+
+      client.send({
+        type:"connect-ok",
+        rooms: rooms
+      });
+
+      Object.keys(xmppClient.rooms).forEach(function(roomName) {
+        var room = xmppClient.rooms[roomName];
+
+        // Send buffered lists for UI reconstruction
+        room.buffer.forEach(function(m){
+          client.send(m);
+        });
+
+        room.participants.forEach(function(m){
+          client.send(m);
+        });
+      });
+    }
+  },
+
+  onAuth: function(xmppClient, identifier, message){
+    var client = this;
+
+    xmppClient.connect(message.jid, message.password, function(err) {
+      if (err) {
+        client.send( { type:"auth-not-ok" } );
+      } else {
+        connections[identifier] = xmppClient;
+        client.send( { type:"auth-ok" } );
+      }
+    });
+  },
+
+  onJoinRom: function(xmppClient, message){
+    var client = this;
+
+    xmppClient.join(message.room, function(room) {
+      room.on("message", function(m) {
+        m["type"] = "message";
+        m["room"] = message.room;
+        client.send(m);
+        room.buffer.push(m);
+        if (room.buffer.length > room.bufferSize) room.buffer.shift();
+      })
+
+      room.on("presence", function(m) {
+        m["type"] = "presence";
+        client.send(m);
+        room.participants.push(m);
+      })
+
+    });
+  },
+
+  onMessage: function(xmppClient, message){
+    var client = this;
+
+    xmppClient.rooms[message.room].say(message.body, function() {
+      client.send({type:"message-ok"});
+    });
+  },
+
+}
+
+
+
 socket.on('connection', function(client) {
 
   var xmppClient = null;
   var identifier = null;
 
-  function setXmppClient(cookie){
+  function getXmppClient(cookie){
     identifier = cookie || client.sessionId;
 
     xmppClient = connections[identifier]
@@ -56,72 +135,23 @@ socket.on('connection', function(client) {
   }
 
   client.on("message", function(message) {
+    if (message.sid) getXmppClient(message.sid);
 
-    if (message.type == 'connect') {
-      setXmppClient(message.sid);
-
-      if (xmppClient.connection == null) {
-        client.send( { type:"connect-not-ok" } );
-      } else {
-        var rooms = [];
-        for (roomName in xmppClient.rooms) rooms.push(roomName);
-
-        client.send({
-          type:"connect-ok",
-          rooms: rooms
-        });
-
-        Object.keys(xmppClient.rooms).forEach(function(roomName) {
-          var room = xmppClient.rooms[roomName];
-
-          // Send buffered lists for UI reconstruction
-          room.buffer.forEach(function(m){
-            client.send(m);
-          });
-
-          room.participants.forEach(function(m){
-            client.send(m);
-          });
-        });
-      }
-    }
-
-    if (message.type == 'auth') {
-      setXmppClient(message.sid);
-
-      xmppClient.connect(message.jid, message.password, function(err) {
-        if (err) {
-          client.send( { type:"auth-not-ok" } );
-        } else {
-          connections[identifier] = xmppClient;
-          client.send( { type:"auth-ok" } );
-        }
-      });
-    }
-
-    if (message.type == "join-room") {
-      xmppClient.join(message.room, function(room) {
-        room.on("message", function(m) {
-          m["type"] = "message";
-          m["room"] = message.room;
-          client.send(m);
-          room.buffer.push(m);
-          if (room.buffer.length > room.bufferSize) room.buffer.shift();
-        })
-
-        room.on("presence", function(m) {
-          m["type"] = "presence";
-          client.send(m);
-          room.participants.push(m);
-        })
-
-      });
-    }
-
-    if (message.type == "message") {
-      xmppClient.rooms[message.room].say(message.body, function() {
-        client.send({type:"message-ok"});
-      });
+    switch(message.type) {
+    case 'connect':
+      events.onConnect.call(client, xmppClient);
+      break;
+    case 'auth':
+      events.onAuth.call(client, xmppClient, identifier, message);
+      break;
+    case 'join-room':
+      events.onJoinRom.call(client, xmppClient, message);
+      break;
+    case 'message':
+      events.onMessage.call(client, xmppClient, message);
+      break;
+    default:
+      console.log("Unknown message received.");
     }
   });
 
