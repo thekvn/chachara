@@ -7,7 +7,17 @@ var Chachara = {
       sid: "chachara.sid"
     });
 
-    new Chachara.Application({client:client});
+    var messageHandler = new Chachara.MessageHandler({
+      handlers : [
+        new Chachara.YoutubeHandler('youtube')
+      ]
+    });
+
+    new Chachara.Application({
+      client: client,
+      messageHandler: messageHandler
+    });
+
     Backbone.history.start();
   }
 }

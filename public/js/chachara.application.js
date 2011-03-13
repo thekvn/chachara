@@ -8,7 +8,8 @@ $(function() {
     initialize: function(options) {
       _(this).bind("init", "signin", "chat", "createRoomView");
 
-      this.client    = options.client;
+      this.client         = options.client;
+      this.messageHandler = options.messageHandler;
       this.chatViews = {};
       this.useNotifications = false;
       this.nick = null;
@@ -125,6 +126,7 @@ $(function() {
       });
 
       this.client.bind("message", function(message) {
+        if (message.room == room) self.messageHandler.processMessage(message);
         newView.displayMessage(message);
       });
 

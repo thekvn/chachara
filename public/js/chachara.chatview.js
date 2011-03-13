@@ -49,11 +49,14 @@ $(function() {
       var fromParts = message.from.split("/");
       var room = fromParts[0].split("@")[0];
       var name = fromParts[1];
-      var body = $("<div/>").text(message.body).html();
+      // var body = $("<div/>").text(message.body).html();
+      var body = message.body;
+      var html = message.html;
 
       if (this.options.room === message.room) {
         $(this.node).find(".primary-pane")
           .append("<p><b><span class='name'>" + name + "</span></b>" + body + "</p>")
+          .append("<p><b><span class='name'>" + name + "</span></b>" + html + "</p>")
           .scrollTop(100000);
       }
 
