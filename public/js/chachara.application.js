@@ -23,14 +23,6 @@ $(function() {
         self.signin();
       });
 
-      // I think that this particular event should show the user something
-      // k
-      //
-      // like: authentication failure
-      this.client.bind("auth-not-ok", function() {
-        console.log("[App] auth-not-ok Presenting Signin Form")
-        self.signin();
-      });
 
       this.client.bind("connect-ok", function(connectData) {
         console.log("[App] connect-ok Presenting ChatView");
@@ -51,23 +43,31 @@ $(function() {
     },
 
     signin: function() {
-      var self = this;
+      if (this.signinView == undefined) {
+        var self = this;
+        this.signinView = new Chachara.SigninView();
+        this.signinView.render();
 
-      this.signinView = new Chachara.SigninView();
-      this.signinView.render();
+        this.client.bind("auth-not-ok", function(message) {
+          console.log("[App] auth-not-ok Presenting Signin Form")
+          self.signinView.presentError("Authentication Failed.");
+        });
 
-      this.signinView.bind('submit', function(data) {
-        self.client.authenticate(data);
-        self.enableNotifications();
+        this.signinView.bind('submit', function(data) {
+          self.client.authenticate(data);
+          self.enableNotifications();
+          self.authData = data;
+        });
+
         self.client.bind("auth-ok", function() {
           console.log("[App] Authentication Successful");
           console.log("[App] Initiating Chat");
           self.signinView.dismiss();
-          self.nick = data.jid.split("@")[0];
-          data["do-join"] = true;
-          self.chat(data);
+          self.nick = self.authData.jid.split("@")[0];
+          self.authData["do-join"] = true;
+          self.chat(self.authData);
         });
-      });
+      }
     },
 
     chat: function(chatData) {

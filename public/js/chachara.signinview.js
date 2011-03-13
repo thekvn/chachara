@@ -22,6 +22,10 @@ $(function() {
       this.trigger("submit", data);
     },
 
+    presentError: function(msg) {
+      this.$(".signin-view").find(".error").text(msg);
+    },
+
     render: function() {
       var dom = $(this.template());
 
