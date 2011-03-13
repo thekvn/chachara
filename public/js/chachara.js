@@ -9,7 +9,10 @@ var Chachara = {
 
     var messageHandler = new Chachara.MessageHandler({
       handlers : [
-        new Chachara.YoutubeHandler('youtube')
+        new Chachara.YoutubeHandler('youtube'),
+        new Chachara.CloudAppHandler('cloudapp'),
+        new Chachara.TwitterHandler('twitter'),
+        new Chachara.InstagramHandler('instagram')
       ]
     });
 

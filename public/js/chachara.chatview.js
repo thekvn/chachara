@@ -66,6 +66,18 @@ $(function() {
         .scrollTop(100000);
     },
 
+    displayEmbedly: function(message) {
+      var fromParts = message.from.split("/");
+      var room = fromParts[0].split("@")[0];
+      var name = fromParts[1];
+      var html = message.html;
+
+      if (this.options.room === message.room) {
+        node = $(this.node).find(".primary-pane").append("<p><b><span class='name'>" + name + "</span></b>" + html + "</p>");
+        node.scrollTop(100000);
+      }
+    },
+
     onInput: function(e) {
       if (e.which == '13') {
         var str = $(e.target).val();

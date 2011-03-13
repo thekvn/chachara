@@ -125,6 +125,10 @@ $(function() {
         }
       });
 
+      this.messageHandler.bind("embedded", function(message){
+        if (message.room == room) newView.displayEmbedly(message);
+      });
+
       this.client.bind("message", function(message) {
         if (message.room == room) self.messageHandler.processMessage(message);
         newView.displayMessage(message);

@@ -10,33 +10,53 @@ _.extend(Chachara.MessageHandler.prototype, Backbone.Events, {
     this.handlers = options.handlers;
   },
 
+  embeddable: function(regex, body) {
+    var matches = regex.exec(body);
+    return (matches != null) ? true : false;
+  },
+
+  url: function(body) {
+    var regex = /((http|https):\/\/(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)/;
+    return regex.exec(body)[0];
+  },
+
   processMessage: function(message) {
-    this.handlers.forEach(function(handler){
-      handler.processMessage(message);
-    });
+    var self = this;
+    var embeddable = false;
+
+    for (var i = 0; i < this.handlers.length; i++) {
+      if (this.embeddable(this.handlers[i].regex, message.body)) {
+        $.embedly(this.url(message.body),
+          { maxWidth : 800, maxHeight: 500,
+            success  : function(oembed, dict) {
+              console.log(oembed);
+              if (oembed.html5)     message.html = oembed.html5;
+              else if (oembed.html) message.html = oembed.html;
+              else                  message.html = oembed.code;
+              self.trigger("embedded", message);
+        }});
+      }
+    }
   }
 
 });
 
 Chachara.YoutubeHandler = function(name) {
   this.name = name;
-  this.regex = /^.*youtube.com\/watch[^v]+v.(.{11}).*/
+  this.regex = /^.*youtube.com\/watch[^v]+v.(.{11}).*/;
 }
 
-Chachara.YoutubeHandler.prototype.processMessage = function(message) {
-  message.html = message.html || '';
-
-  var matches = this.regex.exec(message.body);
-  if (matches) {
-    html = this.replaceHtml(matches[1]);
-    message.html += html;
-  }
+Chachara.CloudAppHandler = function(name) {
+  this.name = name;
+  this.regex = /^.*cl.ly\/.*/;
 }
 
-Chachara.YoutubeHandler.prototype.replaceHtml = function(videoId) {
-  html  = "<iframe class='youtube-player' ";
-  html += "type='text/html' width='640' height='385' ";
-  html += "src='http://www.youtube.com/embed/" + videoId + "' ";
-  html += "frameborder='0'></iframe>";
-  return html;
+Chachara.TwitterHandler = function(name) {
+  this.name = name;
+  this.regex = /^.*twitter.com\/.*\/status\//;
+}
+
+Chachara.InstagramHandler = function(name) {
+  this.name = name;
+  this.regex = /^.*instagr.am\/p\/.*/;
 }
