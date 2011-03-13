@@ -30,9 +30,8 @@ _.extend(Chachara.MessageHandler.prototype, Backbone.Events, {
           { maxWidth : 800, maxHeight: 500,
             success  : function(oembed, dict) {
               console.log(oembed);
-              if (oembed.html5)     message.html = oembed.html5;
-              else if (oembed.html) message.html = oembed.html;
-              else                  message.html = oembed.code;
+              if (oembed.html) message.html = oembed.html;
+              else             message.html = oembed.code;
               self.trigger("embedded", message);
         }});
       }
