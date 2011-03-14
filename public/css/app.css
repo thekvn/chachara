@@ -6,19 +6,22 @@ body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-hei
   height: 100%;
 }
 .chat-view { overflow: hidden; height: 99.9%; font: 13px Helvetica, Arial; color: #ddd; }
-.chat-view p { line-height: 1.5em; margin: 0; }
-.chat-view b { display: inline-block; width: 180px; text-align: right; padding-right: 10px; }
-.chat-view span.name { color: #4ECDC4; }
+.chat-view ul { vertical-align: top; line-height: 1.5em; }
+.chat-view ul li { margin: 0; list-style: none; overflow: hidden; vertical-align: top; margin-bottom: 0.25em; }
+.chat-view ul li b { vertical-align: top; }
+.chat-view ul li b.name { color: #4ECDC4; display: inline-block; width: 180px; text-align: right; padding-right: 10px;}
+.chat-view ul li b.msg  { display: inline-block; width: 940px; font-weight: normal;}
 
 .chat-view .presence { font-style: italic; color: #555; }
+.chat-view .presence .name { margin-right: 10px; }
 .chat-view .primary-pane { display: block; padding: 10px; height: 500px; overflow-y: scroll }
+.chat-view .primary-pane b.name { width: 140px; }
 .chat-view .input-pane { }
 
 
 .chat-view .secondary-pane { border-bottom: 1px solid #555; height: 30%; display: block; padding: 10px; overflow-y: scroll; }
-.chat-view .secondary-pane b { color: #999; width: 180px;}
-.chat-view .secondary-pane span.room { color: #444; }
-.chat-view .secondary-pane span.name { color: #C44D58; }
+.chat-view .secondary-pane b.name { color: #999; width: 180px;  color: #C44D58;}
+.chat-view .secondary-pane b.room { color: #444; }
 
 .chat-view .input-pane { width: 100%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
 .chat-view .input-pane span.current { display: inline-block; width: 80px; text-align: right;}

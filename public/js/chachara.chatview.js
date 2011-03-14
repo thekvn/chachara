@@ -39,8 +39,8 @@ $(function() {
 
       if (this.options.room === room) {
         var userAction = (status == "online") ? "joined" : "left";
-        $(this.node).find(".primary-pane")
-           .append("<p class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</p>")
+        $(this.node).find(".primary-pane ul")
+           .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>")
            .scrollTop(100000);
       }
     },
@@ -52,17 +52,21 @@ $(function() {
       var body = $("<div/>").text(message.body).html();
       var html = message.html;
 
+      body = body.replace(/\n/g, "<br/>");
+      body = body.replace(/\s/g, "&nbsp;");
+
       if (this.options.room === message.room) {
-        node = $(this.node).find(".primary-pane").append("<p><b><span class='name'>" + name + "</span></b>" + body + "</p>");
+        node = $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg'>" + body + "</b></li>");
+
         if (message.html)
-          node.append("<p><b><span class='name'>" + name + "</span></b>" + html + "</p>");
+          node.append("<li><b class='name'>" + name + "</b><b class='msg'>" + html + "</b></li>");
 
         node.scrollTop(100000);
       }
 
       $(this.node)
-        .find(".secondary-pane")
-        .append("<p><b><span class='room'>#" + room + "</span> <span class='name'>" + name + "</span></b> " + body + "</p>")
+        .find(".secondary-pane ul")
+        .append("<li><b class='room'>#" + room + "</b> <b class='name'>" + name + "</b><b class='msg'> " + body + "</b></li>")
         .scrollTop(100000);
     },
 
@@ -73,7 +77,7 @@ $(function() {
       var html = message.html;
 
       if (this.options.room === message.room) {
-        node = $(this.node).find(".primary-pane").append("<p><b><span class='name'>" + name + "</span></b>" + html + "</p>");
+        node = $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg'>" + html + "</b></li>");
         node.scrollTop(100000);
       }
     },
