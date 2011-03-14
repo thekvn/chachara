@@ -17,7 +17,7 @@ $(function() {
       $(this.node).find("span.current").text("#"+this.shortname);
       $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
-      $(this.node).find(".primary-pane").append("<p>Joined " + this.options.room + "</p>")
+      $(this.node).find(".primary-pane ul").append("<li>Joined " + this.options.room + "</li>")
     },
 
     show: function() {
