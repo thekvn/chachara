@@ -8,6 +8,7 @@ $(function() {
       this.shortname = options.room.split("@")[0];
       this.id = "pane-" + this.shortname;
       this.node = "#" + this.id;
+      this.participants = {};
     },
 
     render: function() {
@@ -23,6 +24,7 @@ $(function() {
     show: function() {
       $(this.node).show();
       $(this.node).find(".primary-pane").scrollTop(100000);
+      $(this.node).find(".participants-pane").scrollTop(100000);
       $(this.node).find(".secondary-pane").scrollTop(100000);
       $(this.node).find(".chatinput").focus();
     },
@@ -32,6 +34,7 @@ $(function() {
     },
 
     displayPresence: function(data) {
+      console.log(this);
       var fromParts = data.from.split("/");
       var room      = fromParts[0];
       var who       = fromParts[1];
@@ -79,6 +82,28 @@ $(function() {
       if (this.options.room === message.room) {
         node = $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg'>" + html + "</b></li>");
         node.scrollTop(100000);
+      }
+    },
+
+    updateParticipants: function(presence) {
+      var fromParts = presence.from.split("/");
+      var room      = fromParts[0];
+      var who       = fromParts[1];
+      var status    = presence.status
+
+      if (this.options.room === room) {
+        if (this.participants[who] && status == 'offline') {
+          console.log('remove!');
+          delete this.participants[who];
+          $(this.node).find(".participants-pane li").remove("#" + who);
+
+        } else {
+          this.participants[who] = presence;
+          // TODO Allow more states: idle, away. and show appropriate colors
+          // in the sidebar
+          $(this.node).find(".participants-pane ul")
+             .append("<li class='participant' id='" + who + "'>" + who + "</li>");
+        }
       }
     },
 

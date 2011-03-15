@@ -136,6 +136,7 @@ $(function() {
 
       this.client.bind("presence", function(message) {
         newView.displayPresence(message);
+        newView.updateParticipants(message);
       });
 
       _(this.chatViews.values).each(function(v) {

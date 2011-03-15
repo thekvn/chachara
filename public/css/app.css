@@ -10,20 +10,22 @@ body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-hei
 .chat-view ul li { margin: 0; list-style: none; overflow: hidden; vertical-align: top; margin-bottom: 0.25em; }
 .chat-view ul li b { vertical-align: top; }
 .chat-view ul li b.name { color: #4ECDC4; display: inline-block; width: 180px; text-align: right; padding-right: 10px;}
-.chat-view ul li b.msg  { display: inline-block; width: 940px; font-weight: normal;}
+.chat-view ul li b.msg  { display: inline-block; width: 800px; font-weight: normal;}
 
 .chat-view .presence { font-style: italic; color: #555; }
 .chat-view .presence .name { margin-right: 10px; }
-.chat-view .primary-pane { display: block; padding: 10px; height: 500px; overflow-y: scroll }
+.chat-view .primary-pane { float: left; width: 85%; padding: 10px; height: 500px; overflow-y: scroll }
 .chat-view .primary-pane b.name { width: 140px; }
-.chat-view .input-pane { }
+.chat-view .input-pane { clear: both; }
 
+.chat-view .participants-pane { float: right; }
+.chat-view .participant { text-align: left; margin: 0; list-style: none; overflow: hidden; vertical-align: top; margin-bottom: 0.25em; }
 
 .chat-view .secondary-pane { border-bottom: 1px solid #555; height: 30%; display: block; padding: 10px; overflow-y: scroll; }
 .chat-view .secondary-pane b.name { color: #999; width: 180px;  color: #C44D58;}
 .chat-view .secondary-pane b.room { color: #444; }
 
-.chat-view .input-pane { width: 100%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
+.chat-view .input-pane { clear: both; width: 100%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
 .chat-view .input-pane span.current { display: inline-block; width: 80px; text-align: right;}
 .chat-view .input-pane form { margin: 0; display: inline-block; }
 .chat-view .input-pane input { padding: 5px; background: #111; border: none; width: 500px;; color: #FFF; }
@@ -33,7 +35,7 @@ body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-hei
   width: 400px;
   margin: 0 auto;
   padding: 25px;
-  background: #FFF; color: #111; box-shadow: 1px 1px 10px #000; 
+  background: #FFF; color: #111; box-shadow: 1px 1px 10px #000;
   font-size: 13px;
   overflow: hidden;
 }
@@ -41,7 +43,7 @@ body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-hei
 .signin-view h1 { margin: 0; padding: 0; margin-bottom: 0.5em; font-size: 18px; }
 .signin-view form { padding: 0; margin: 0;}
 .signin-view label { display: block; overflow: hidden; margin-top: 0.5em; }
-.signin-view label input { 
+.signin-view label input {
   border: 3px solid #eee;
   background: #eee;
   float: right;

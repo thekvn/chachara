@@ -111,9 +111,6 @@ var events = {
   },
 
   onMessage: function(xmppClient, message, callback){
-    // inspect("iiii");
-    // inspect(client.sessionId);
-
     xmppClient.rooms[message.room].say(message.body, function() {
       callback({type:"message-ok"});
     });
@@ -129,10 +126,6 @@ socket.on('connection', function(client) {
 
   function getXmppClient(cookie){
     identifier = cookie || client.sessionId;
-
-    // xmppClient = connections[identifier]
-    //            ? connections[identifier]
-    //            : new Client();
 
     // Renew the websocket assigned to the xmpp client
     if (connections[identifier]) {
