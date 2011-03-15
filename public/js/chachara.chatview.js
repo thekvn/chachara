@@ -41,8 +41,8 @@ $(function() {
       if (this.options.room === room) {
         var userAction = (status == "online") ? "joined" : "left";
         $(this.node).find(".primary-pane ul")
-           .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>")
-           .scrollTop(10000);
+           .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>");
+        $(this.node).find(".primary-pane").scrollTop(10000);
       }
     },
 
@@ -82,7 +82,7 @@ $(function() {
 
       if (this.options.room === message.room) {
         $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg embed'>" + html + "</b></li>");
-        $(this.node).scrollTop(100000);
+        $(this.node).find(".primary-pane").scrollTop(10000);
       }
     },
 
