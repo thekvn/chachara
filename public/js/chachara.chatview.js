@@ -34,7 +34,6 @@ $(function() {
     },
 
     displayPresence: function(data) {
-      console.log(this);
       var fromParts = data.from.split("/");
       var room      = fromParts[0];
       var who       = fromParts[1];
