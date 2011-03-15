@@ -1,10 +1,14 @@
 html,body { margin: 0; padding: 0; }
-body { margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; background: #333; color: #FFF; margin-top: 18px; }
+body {
+  background: url(/img/02433_archinthesky_1920x1200.jpg);
+  background-size: 100% 100%;
+  margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; color: #FFF; margin-top: 18px;
+ }
 
 #app {
-  background: #191919;
-  box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
-  border: none;
+  background-color: rgba(0,0,0,0.9);
+  box-shadow: 1px 1px 20px rgba(0,0,0,0.9);
+  border: 1px solid rgba(0,0,0,0.9);
   overflow: hidden;
   height: 840px;
   width: 1280px;

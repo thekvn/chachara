@@ -81,8 +81,8 @@ $(function() {
       var html = message.html;
 
       if (this.options.room === message.room) {
-        node = $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg embed'>" + html + "</b></li>");
-        node.scrollTop(100000);
+        $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg embed'>" + html + "</b></li>");
+        $(this.node).scrollTop(100000);
       }
     },
 
