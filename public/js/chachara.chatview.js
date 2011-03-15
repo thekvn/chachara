@@ -1,6 +1,6 @@
 $(function() {
   Chachara.ChatView = Backbone.View.extend({
-    template: _.template($("#chat-view-template").html()),
+    template: _.template($("#chat-view-room-template").html()),
 
     initialize: function(options) {
       _.bindAll(this, "render", "onInput", "displayMessage");
@@ -25,7 +25,6 @@ $(function() {
       $(this.node).show();
       $(this.node).find(".primary-pane").scrollTop(100000);
       $(this.node).find(".participants-pane").scrollTop(100000);
-      $(this.node).find(".secondary-pane").scrollTop(100000);
       $(this.node).find(".chatinput").focus();
     },
 
@@ -43,7 +42,7 @@ $(function() {
         var userAction = (status == "online") ? "joined" : "left";
         $(this.node).find(".primary-pane ul")
            .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>")
-           .scrollTop(100000);
+           .scrollTop(10000);
       }
     },
 
@@ -54,22 +53,25 @@ $(function() {
       var body = $("<div/>").text(message.body).html();
       var html = message.html;
 
+      var ul = $(this.node).find(".primary-pane ul");
+
       body = body.replace(/\n/g, "<br/>");
       body = body.replace(/\s/g, "&nbsp;");
 
       if (this.options.room === message.room) {
-        node = $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg'>" + body + "</b></li>");
+        ul.append("<li><b class='name'>" + name + "</b><b class='msg'>" + body + "</b></li>");
 
-        if (message.html)
-          node.append("<li><b class='name'>" + name + "</b><b class='msg'>" + html + "</b></li>");
+        if (message.html) {
+          ul.append("<li><b class='name'>" + name + "</b><b class='msg'>" + html + "</b></li>");
+        }
 
-        node.scrollTop(100000);
+        $(this.node).find(".primary-pane").scrollTop(100000);
       }
 
-      $(this.node)
-        .find(".secondary-pane ul")
-        .append("<li><b class='room'>#" + room + "</b> <b class='name'>" + name + "</b><b class='msg'> " + body + "</b></li>")
-        .scrollTop(100000);
+      // $(this.node)
+      //   .find(".secondary-pane ul")
+      //   .append("<li><b class='room'>#" + room + "</b> <b class='name'>" + name + "</b><b class='msg'> " + body + "</b></li>")
+      //   .scrollTop(100000);
     },
 
     displayEmbedly: function(message) {

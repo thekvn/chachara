@@ -40,6 +40,17 @@ $(function() {
       this.client.bind("message", function(message) {
         self.displayNotification(message);
       });
+
+      var tpl = $(_.template("#chat-view-template")());
+      $("#app").html(tpl.html());
+
+      this.secondaryView = new Chachara.SecondaryView({el: $("#secondary-view")[0] });
+      this.secondaryView.render();
+
+      this.client.bind("message", function(message) {
+        self.secondaryView.displayMessage(message);
+      });
+
     },
 
     signin: function() {
@@ -73,6 +84,10 @@ $(function() {
     chat: function(chatData) {
       var self = this;
 
+      var tpl = _.template("#chat-view-template");
+
+      $("#app").html($(tpl()).html());
+
       this.client.bind("join-room", function(data) {
         self.createRoomView(data.room);
       });
@@ -89,7 +104,7 @@ $(function() {
       var self    = this;
       var room    = room;
 
-      var newView = new Chachara.ChatView({room:room, el:$("#app")[0]});
+      var newView = new Chachara.ChatView({room:room, el:$("#chat-view-container")[0]});
 
       newView.render();
 
@@ -130,7 +145,9 @@ $(function() {
       });
 
       this.client.bind("message", function(message) {
-        if (message.room == room) self.messageHandler.processMessage(message);
+        if (message.room == room) {
+          self.messageHandler.processMessage(message);
+        }
         newView.displayMessage(message);
       });
 
@@ -139,11 +156,12 @@ $(function() {
         newView.updateParticipants(message);
       });
 
-      _(this.chatViews.values).each(function(v) {
-        v.hide();
-      });
-
       this.chatViews[room] = newView;
+
+      for (var k in this.chatViews) {
+        this.chatViews[k].hide();
+      }
+
       newView.show();
     },
 

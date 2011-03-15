@@ -1,35 +1,64 @@
-html,body { padding: 5px; margin: 0; padding: 0; }
-body { overflow: hidden; margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; background: #111; color: #FFF; }
+html,body { margin: 0; padding: 0; }
+body {  margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; background: #111; color: #FFF; }
 
 #app {
+  border: 3px solid gray;
   overflow: hidden;
-  height: 100%;
+  height: 840px;
+  width: 1280px;
+  margin: 0 auto;
 }
-.chat-view { overflow: hidden; height: 99.9%; font: 13px Helvetica, Arial; color: #ddd; }
-.chat-view ul { vertical-align: top; line-height: 1.5em; }
-.chat-view ul li { margin: 0; list-style: none; overflow: hidden; vertical-align: top; margin-bottom: 0.25em; }
+
+#chat-view-container { 
+  overflow: hidden;
+  height: 514px; 
+}
+
+.chat-view { 
+  width: 1280px;
+  font-size: 13px;
+  overflow: hidden;
+  display: block;
+  font: 13px Helvetica, Arial;
+  color: #ddd;
+  float: left;
+}
+
+.chat-view ul {  margin: 0; overflow: hidden; vertical-align: top; line-height: 1.5em; padding: 0;  }
+.chat-view ul li {  margin: 0; list-style: none; overflow: hidden; vertical-align: top; margin-top: 0.25em; }
 .chat-view ul li b { vertical-align: top; }
 .chat-view ul li b.name { color: #4ECDC4; display: inline-block; width: 180px; text-align: right; padding-right: 10px;}
-.chat-view ul li b.msg  { display: inline-block; width: 800px; font-weight: normal;}
+.chat-view ul li b.msg  { display: inline-block; width: 600px; font-weight: normal;}
+
+.chat-view .primary-pane { 
+  float: left;
+  padding: 10px;
+  overflow-y: scroll;
+  height: 456px;
+  width: 1020px;
+ }
+.chat-view .primary-pane b.name { width: 140px; }
+
+.chat-view .participants-pane {  width: 235px; float: right; height: 480px; }
+.chat-view .participants-pane ul { list-style: none; padding: 5px; }
+.chat-view .participants-pane li { padding: 0 10px; }
+
+.chat-view .input-pane { display: block; clear: both; width: 99.9%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
+.chat-view .input-pane span.current { display: inline-block; width: 80px; text-align: right;}
+.chat-view .input-pane form { margin: 0; display: inline-block; }
+.chat-view .input-pane input { font-size: 14px; padding: 5px; background: #111; border: none; width: 600px; color: #FFF; }
+.chat-view .input-pane input:focus { outline: 0 none; }
 
 .chat-view .presence { font-style: italic; color: #555; }
 .chat-view .presence .name { margin-right: 10px; }
-.chat-view .primary-pane { float: left; width: 85%; padding: 10px; height: 500px; overflow-y: scroll }
-.chat-view .primary-pane b.name { width: 140px; }
-.chat-view .input-pane { clear: both; }
 
-.chat-view .participants-pane { float: right; }
-.chat-view .participant { text-align: left; margin: 0; list-style: none; overflow: hidden; vertical-align: top; margin-bottom: 0.25em; }
 
-.chat-view .secondary-pane { border-bottom: 1px solid #555; height: 30%; display: block; padding: 10px; overflow-y: scroll; }
-.chat-view .secondary-pane b.name { color: #999; width: 180px;  color: #C44D58;}
-.chat-view .secondary-pane b.room { color: #444; }
-
-.chat-view .input-pane { clear: both; width: 100%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
-.chat-view .input-pane span.current { display: inline-block; width: 80px; text-align: right;}
-.chat-view .input-pane form { margin: 0; display: inline-block; }
-.chat-view .input-pane input { padding: 5px; background: #111; border: none; width: 500px;; color: #FFF; }
-.chat-view .input-pane input:focus { outline: 0 none; }
+#secondary-view { font-size: 13px; height: 320px; width: 100%; overflow-y: scroll; }
+#secondary-view ul { padding: 0; list-style: none; overflow: auto; }
+#secondary-view b.meta { display: table-cell; width: 180px; text-align: right; padding-right: 10px; border-right: 1px solid #333; }
+#secondary-view b.name { color: #D95B43; }
+#secondary-view b.room { color: #444; font-weight: normal; font-size: 12px; }
+#secondary-view b.msg { display: table-cell; font-weight: normal; padding-left: 10px;}
 
 .signin-view {
   width: 400px;

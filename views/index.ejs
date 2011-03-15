@@ -12,6 +12,7 @@
     <script src="/js/chachara.client.js"></script>
     <script src="/js/chachara.signinview.js"></script>
     <script src="/js/chachara.chatview.js"></script>
+    <script src="/js/chachara.secondaryview.js"></script>
     <script src="/js/chachara.messagehandler.js"></script>
     <script src="/js/chachara.application.js"></script>
     <script type="text/javascript">
@@ -34,21 +35,17 @@
     </div>
   </script>
 
-  <script type="template" id="chat-view-template">
+  <script type="template" id="chat-view-room-template">
     <div class="chat-view">
-      <div class="primary-pane">
-        <ul></ul>
-      </div>
-      <div class="participants-pane">
-        <ul></ul>
-      </div>
-      <div class="input-pane">
-        <span class="current"></span><input type="text" class="chatinput" />
-      </div>
-      <div class="secondary-pane">
-        <ul></ul>
-      </div>
+      <div class="primary-pane"><ul></ul></div>
+      <div class="participants-pane"><ul></ul></div>
+      <div class="input-pane"><span class="current"></span><input type="text" class="chatinput" /></div>
     </div>
+  </script>
+
+  <script type="template" id="chat-view-template">
+    <div id="chat-view-container"></div>
+    <div id="secondary-view"><ul></ul></div>
   </script>
 
   <body>
