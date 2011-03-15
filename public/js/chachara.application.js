@@ -18,6 +18,10 @@ $(function() {
     init: function() {
       var self = this;
 
+      var dom = $("#app");
+      dom.css("position", "relative")
+         .css("top", (($(window).height() - dom.height())/2) +"px");
+
       this.client.bind("connect-not-ok", function() {
         console.log("[App] connect-not-ok Presenting Signin Form")
         self.signin();
