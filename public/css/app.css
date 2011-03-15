@@ -1,8 +1,10 @@
 html,body { margin: 0; padding: 0; }
-body {  margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; background: #111; color: #FFF; }
+body { margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; background: #333; color: #FFF; margin-top: 18px; }
 
 #app {
-  border: 3px solid gray;
+  background: #111;
+  box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
+  border: none;
   overflow: hidden;
   height: 840px;
   width: 1280px;
