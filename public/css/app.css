@@ -2,7 +2,7 @@ html,body { margin: 0; padding: 0; }
 body { margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; background: #333; color: #FFF; margin-top: 18px; }
 
 #app {
-  background: #111;
+  background: #191919;
   box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
   border: none;
   overflow: hidden;
@@ -30,7 +30,9 @@ body { margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; backgr
 .chat-view ul li {  margin: 0; list-style: none; overflow: hidden; vertical-align: top; margin-top: 0.25em; }
 .chat-view ul li b { vertical-align: top; }
 .chat-view ul li b.name { color: #4ECDC4; display: inline-block; width: 180px; text-align: right; padding-right: 10px;}
-.chat-view ul li b.msg  { display: inline-block; width: 600px; font-weight: normal;}
+.chat-view ul li b.msg { display: inline-block; width: 600px; font-weight: normal;}
+.chat-view .embed { margin-bottom: 0.5em; }
+.chat-view ul li b.msg.embed object { overflow: hidden; display: block; background: #FFF; padding: 5px; border: 1px solid #444; overflow: hidden; }
 
 .chat-view .primary-pane { 
   float: left;
@@ -46,9 +48,9 @@ body { margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; backgr
 .chat-view .participants-pane li { padding: 0 10px; }
 
 .chat-view .input-pane { display: block; clear: both; width: 99.9%; border-top: 1px solid #444; border-bottom: 1px solid #444; }
-.chat-view .input-pane span.current { display: inline-block; width: 80px; text-align: right;}
+.chat-view .input-pane span.current { display: inline-block; width: 70px;padding-right: 10px; text-align: right;}
 .chat-view .input-pane form { margin: 0; display: inline-block; }
-.chat-view .input-pane input { font-size: 14px; padding: 5px; background: #111; border: none; width: 600px; color: #FFF; }
+.chat-view .input-pane input { font-size: 14px; padding: 5px; background: transparent; width: 1196px; border: none; color: #FFF; }
 .chat-view .input-pane input:focus { outline: 0 none; }
 
 .chat-view .presence { font-style: italic; color: #555; }
