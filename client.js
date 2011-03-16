@@ -27,7 +27,7 @@ Client.prototype.connect = function(jid, password, callback) {
 
   self.connection.on('error', function(e) {
     if (e == 'XMPP authentication failure') callback(e);
-    else console.log(err);
+    else console.log(e);
   });
 
   function onOnline() {
