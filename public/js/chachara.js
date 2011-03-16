@@ -16,7 +16,7 @@ var Chachara = {
       ]
     });
 
-    new Chachara.Application({
+    window.chachara = new Chachara.Application({
       client: client,
       messageHandler: messageHandler
     });

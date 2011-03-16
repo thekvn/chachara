@@ -19,6 +19,7 @@ $(function() {
         password: this.$(".password").val(),
         rooms:    this.$(".rooms").val().split(",")
       }
+      console.log("SUBMIT" + data.rooms);
       this.trigger("submit", data);
     },
 

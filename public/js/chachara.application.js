@@ -10,7 +10,12 @@ $(function() {
 
       this.client         = options.client;
       this.messageHandler = options.messageHandler;
+
       this.chatViews = {};
+
+      this.rooms        = new Chachara.Rooms();
+      this.participants = new Chachara.Participants();
+
       this.useNotifications = false;
       this.nick = null;
     },
@@ -28,13 +33,8 @@ $(function() {
         self.signin();
       });
 
-
       this.client.bind("connect-ok", function(connectData) {
-        console.log("[App] connect-ok Presenting ChatView");
-        _(connectData.rooms).each(function(room) {
-          console.log("[App] Server Gave Rooms: -> " + room);
-          self.createRoomView(room);
-        })
+        self.chat(connectData);
       });
 
       this.client.bind("disconnect", function() {
@@ -93,29 +93,42 @@ $(function() {
 
     chat: function(chatData) {
       var self = this;
-
       var tpl = _.template("#chat-view-template");
 
       $("#app").html($(tpl()).html());
       $("#app").removeClass("transparent");
 
+      self.rooms.bind("add", function(room) {
+        self.createRoomView(room);
+      })
+
       this.client.bind("join-room", function(data) {
-        self.createRoomView(data.room);
+        self.rooms.add(new Chachara.Room({id: data.room}));
       });
 
-      if (chatData["do-join"]) {
+      if (chatData.rooms) {
         _(chatData.rooms).each(function(room) {
-          self.client.join(room);
+          if (chatData["do-join"]) {
+            self.client.join(room);
+          } else {
+            self.rooms.add(new Chachara.Room({id: room}));
+          }
         });
       }
     },
 
+    /*
+    * createRoomView
+    *
+    * params room  Chachara.Room
+    */
     createRoomView: function(room) {
-      console.log("[App] Create Room View -> "+room);
+      console.log("[App] Create Room View -> " + room.id);
       var self    = this;
-      var room    = room;
-
-      var newView = new Chachara.ChatView({room:room, el:$("#chat-view-container")[0]});
+      var newView = new Chachara.ChatView({
+        el: $("#chat-view-container")[0],
+        room: room
+      });
 
       newView.render();
 
@@ -152,22 +165,35 @@ $(function() {
       });
 
       this.messageHandler.bind("embedded", function(message){
-        if (message.room == room) newView.displayEmbedly(message);
+        if (message.room == room.id) {
+          newView.displayEmbedly(message);
+        }
       });
 
       this.client.bind("message", function(message) {
-        if (message.room == room) {
+        if (message.room == room.id) {
           self.messageHandler.processMessage(message);
         }
         newView.displayMessage(message);
       });
 
       this.client.bind("presence", function(message) {
-        newView.displayPresence(message);
-        newView.updateParticipants(message);
+        var fromParts   = message.from.split(/\//);
+        var thisRoom    = self.rooms.get(fromParts[0]);
+        var participant = thisRoom.participants.get(fromParts[1])
+
+        if (participant == undefined) {
+          participant = new Chachara.Participant({
+            id: fromParts[1],
+            room: thisRoom,
+            status: message.status,
+          });
+
+          thisRoom.participants.add(participant);
+        }
       });
 
-      this.chatViews[room] = newView;
+      this.chatViews[room.id] = newView;
 
       for (var k in this.chatViews) {
         this.chatViews[k].hide();
@@ -192,6 +218,5 @@ $(function() {
         }
       }
     }
-
   })
 });

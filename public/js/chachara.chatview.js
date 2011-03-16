@@ -5,20 +5,27 @@ $(function() {
     initialize: function(options) {
       _.bindAll(this, "render", "onInput", "displayMessage");
 
-      this.shortname = options.room.split("@")[0];
+      this.room = options.room;
+      console.log(this.room);
+
+      this.shortname = this.room.id.split("@")[0];
       this.id = "pane-" + this.shortname;
       this.node = "#" + this.id;
-      this.participants = {};
+
+      this.participantsView = new Chachara.ParticipantsView({
+        participants: this.room.participants,
+      });
     },
 
     render: function() {
       var template = $(this.template()).attr("id", this.id);
       $(this.el).append(template);
+      this.participantsView.el = $(this.node).find(".participants-pane");
 
       $(this.node).find("span.current").text("#"+this.shortname);
       $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
-      $(this.node).find(".primary-pane ul").append("<li>Joined " + this.options.room + "</li>")
+      $(this.node).find(".primary-pane ul").append("<li>Joined " + this.options.room.id + "</li>")
     },
 
     show: function() {
@@ -32,33 +39,33 @@ $(function() {
       $(this.node).hide();
     },
 
-    displayPresence: function(data) {
-      var fromParts = data.from.split("/");
-      var room      = fromParts[0];
-      var who       = fromParts[1];
-      var status    = data.status
+    // displayPresence: function(data) {
+    //   var fromParts = data.from.split("/");
+    //   var room      = fromParts[0];
+    //   var who       = fromParts[1];
+    //   var status    = data.status
 
-      if (this.options.room === room) {
-        var userAction = (status == "online") ? "joined" : "left";
-        $(this.node).find(".primary-pane ul")
-           .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>");
-        $(this.node).find(".primary-pane").scrollTop(10000);
-      }
-    },
+    //   if (this.options.room === room) {
+    //     var userAction = (status == "online") ? "joined" : "left";
+    //     $(this.node).find(".primary-pane ul")
+    //        .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>");
+    //     $(this.node).find(".primary-pane").scrollTop(10000);
+    //   }
+    // },
 
     displayMessage: function(message) {
       var fromParts = message.from.split("/");
       var room = fromParts[0].split("@")[0];
       var name = fromParts[1];
-      var body = $("<div/>").text(message.body).html();
       var html = message.html;
 
       var ul = $(this.node).find(".primary-pane ul");
 
+      var body = $("<div/>").text(message.body).html();
       body = body.replace(/\n/g, "<br/>");
       body = body.replace(/\s/g, "&nbsp;");
 
-      if (this.options.room === message.room) {
+      if (this.room.id === message.room) {
         ul.append("<li><b class='name'>" + name + "</b><b class='msg'>" + body + "</b></li>");
 
         if (message.html) {
@@ -80,7 +87,7 @@ $(function() {
       var name = fromParts[1];
       var html = message.html;
 
-      if (this.options.room === message.room) {
+      if (this.room.id === message.room) {
         $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg embed'>" + html + "</b></li>");
         $(this.node).find(".primary-pane").scrollTop(10000);
       }
@@ -91,21 +98,6 @@ $(function() {
       var room      = fromParts[0];
       var who       = fromParts[1];
       var status    = presence.status
-
-      if (this.options.room === room) {
-        if (this.participants[who] && status == 'offline') {
-          console.log('remove!');
-          delete this.participants[who];
-          $(this.node).find(".participants-pane li").remove("#" + who);
-
-        } else {
-          this.participants[who] = presence;
-          // TODO Allow more states: idle, away. and show appropriate colors
-          // in the sidebar
-          $(this.node).find(".participants-pane ul")
-             .append("<li class='participant' id='" + who + "'>" + who + "</li>");
-        }
-      }
     },
 
     onInput: function(e) {
@@ -115,7 +107,7 @@ $(function() {
           var data = {
             type: "message",
             body: str,
-            room: this.options.room
+            room: this.room.id
           };
           this.trigger("input", data);
           $(this.node).find(".chatinput").val("");
@@ -123,7 +115,6 @@ $(function() {
       }
 
       if (e.ctrlKey && e.which == '44') { /* < */
-        e.stopPropagation();
         this.trigger("prevpane", this);
       }
 
