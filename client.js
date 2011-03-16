@@ -1,4 +1,4 @@
-var sys = require("sys"),
+var util = require("util"),
    xmpp = require("node-xmpp"),
    Room = require("./room.js");
 
@@ -6,6 +6,8 @@ var sys = require("sys"),
 function Client(websocket) {
   this.connection = null;
   this.websocket  = websocket;
+  this.defaultShow = 'chat';
+  this.defaultStatus = 'Cháchara!';
 }
 
 Client.prototype.connect = function(jid, password, callback) {
@@ -32,31 +34,41 @@ Client.prototype.connect = function(jid, password, callback) {
 
   function onOnline() {
     self.connection.on('stanza', onStanza);
-
-    var elem = (
-      new xmpp.Element('presence', { type: 'chat'})
-    ).c('show').t('chat')
-      .up()
-      .c('status').t('Happily echoing your <message/> stanzas');
-    self.connection.send(elem);
+    broadcastStatus();
 
     if (callback != undefined) {
       callback();
     }
   }
 
+  function broadcastStatus() {
+    var elem = new xmpp.Element('presence');
+    elem.c('show').t(self.defaultShow);
+    elem.c('status').t(self.defaultStatus);
+    self.connection.send(elem);
+  }
+
   // TODO refactor
   function onStanza(stanza) {
-    if (stanza.attrs.type == "groupchat") {
-      var fromParts = stanza.attrs.from.split('/');
-      var room = fromParts[0];
-      var nick = fromParts[1];
 
-      // Dispatch message to appropriate room.
-      if (self.rooms[room]) {
-        self.rooms[room]['onMessage'] && self.rooms[room].onMessage(stanza);
+    if (stanza.name == "message") {
+
+      if (stanza.attrs.type == "groupchat") {
+        var fromParts = stanza.attrs.from.split('/');
+        var room = fromParts[0];
+        var nick = fromParts[1];
+
+        // Dispatch message to appropriate room.
+        if (self.rooms[room]) {
+          self.rooms[room]['onMessage'] && self.rooms[room].onMessage(stanza);
+        }
+      } else if (stanza.attrs.type == "chat") {
+        // Implement private messages
+        console.log("message!");
       }
+
     } else if (stanza.name == "presence") {
+
       var fromParts = stanza.attrs.from.split('/');
       var room = fromParts[0];
       var nick = fromParts[1];
@@ -64,6 +76,9 @@ Client.prototype.connect = function(jid, password, callback) {
       if (self.rooms[room]) {
         self.rooms[room]['onPresence'] && self.rooms[room].onPresence(stanza);
       }
+
+    } else if (stanza.name == "iq") {
+      // Handle iqs in the near future
     }
   }
 
@@ -89,7 +104,7 @@ Client.prototype.connect = function(jid, password, callback) {
   }
 
   self.connection.on("error", function(err) {
-    console.log(sys.inspect(err));
+    console.log(util.inspect(err));
   });
 };
 

@@ -43,10 +43,10 @@ $(function() {
       var fromParts = data.from.split("/");
       var room      = fromParts[0];
       var who       = fromParts[1];
-      var status    = data.status
+      var action    = data.show;
 
       if (this.room.id === room) {
-        var userAction = (status == "online") ? "joined" : "left";
+        var userAction = (action == "join-room") ? "joined" : "left";
         $(this.node).find(".primary-pane ul")
            .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>");
         $(this.node).find(".primary-pane").scrollTop(10000);

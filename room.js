@@ -15,36 +15,41 @@ util.inherits(Room, EventEmitter);
 
 // Join the channel.
 Room.prototype.join = function $join$() {
-  var elem = (new xmpp.Element('presence', { from: this.client.jid, to: this.name + '/' + this.client.nick }))
-               .c('x', { xmlns:'http://jabber.org/protocol/muc' })
-               .c('history', { 'maxchars': 0 });
+  var elem = new xmpp.Element('presence', {
+    from: this.client.jid,
+    to: this.name + '/' + this.client.nick
+  });
+
+  elem.c('x', { xmlns:'http://jabber.org/protocol/muc' }).c('history', { 'maxchars': 0 });
+  elem.c('show').t(this.client.defaultShow);
+  elem.c('status').t(this.client.defaultStatus);
+
+  this.client.connection.send(elem);
+}
+
+Room.prototype.showPresence = function(to) {
+  var elem = new xmpp.Element('presence', {
+    from: this.name + '/' + this.client.nick,
+    to: to
+  });
+
+  elem.c('x', { xmlns:'http://jabber.org/protocol/muc#user' });
+  elem.c('show').t(this.client.defaultShow);
+  elem.c('status').t(this.client.defaultStatus);
 
   this.client.connection.send(elem);
 }
 
 Room.prototype.say = function $say$(what, callback) {
   // Send a message.
-  var elem = (new xmpp.Element('message', { from: this.client.jid, to: this.name, type: 'groupchat' })
-                .c('body')
-                .t(what));
+  var elem = new xmpp.Element('message', {
+    from: this.client.jid,
+    to: this.name, type: 'groupchat'
+  });
+
+  elem.c('body').t(what);
   this.client.connection.send(elem);
   callback();
-}
-
-// Server is not sending member list
-Room.prototype.onPresence = function $members$() {
-  iqAttrs = {
-    from: this.client.jid,
-    id: this.client.nick,
-    to: this.name,
-    type: 'get'
-  };
-
-  var elem = (new xmpp.Element('iq', iqAttrs))
-               .c('query', { xmlns:'http://jabber.org/protocol/muc#admin' })
-               .c('item', { affiliation: 'member' });
-
-  this.client.connection.send(elem);
 }
 
 Room.prototype.onMessage = function(stanza) {
@@ -55,15 +60,39 @@ Room.prototype.onMessage = function(stanza) {
   });
 }
 
+
+// XMPP allows 4 'show' fields: chat, xa, away, dnd
+// We add: join-room, exit-room and offline, so we can handle the presence
+// message as a single message type for the websocket clients.
+
 Room.prototype.onPresence = function(stanza) {
-  var status = stanza.attrs.type == "unavailable"
-                              ? "offline"
-                              : "online"
+
+  var show   = null,
+      status = '';
+  var showNode   = stanza.getChild("show"),
+      statusNode = stanza.getChild("status");
+
+  // Unavailable can mean exited room or disconnected from server. When there
+  // is a status node, it means that the client has disconnected from the server
+  if (stanza.attrs.type == "unavailable") {
+    show = (statusNode == undefined) ? "exit-room" : "offline";
+  } else {
+    // When show or status are not undefined, it means that the server sent a
+    // presence status update and not a join room
+    if (showNode != undefined) {
+      show = showNode.getText();
+      status = statusNode.getText();
+    } else {
+      show = "join-room"
+    }
+
+  }
 
   this.emit("presence", this.client.websocket, {
     to:     stanza.attrs.to,
     from:   stanza.attrs.from,
-    status: status
+    status: status,
+    show:   show
   });
 }
 

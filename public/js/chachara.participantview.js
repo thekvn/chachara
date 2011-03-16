@@ -7,7 +7,7 @@ $(function() {
       this.model.view = this;
     },
     render: function() {
-      if (this.model.get("status") == "online") {
+      if (this.model.get("show") == "join-room") {
         $(this.el).show();
         $(this.el).html("<span class='name'>" + this.model.get('id') + "</span>")
       } else {

@@ -178,20 +178,36 @@ $(function() {
       });
 
       this.client.bind("presence", function(message) {
+
         var fromParts   = message.from.split(/\//);
         var thisRoom    = self.rooms.get(fromParts[0]);
         var participant = thisRoom.participants.get(fromParts[1])
 
-        newView.displayPresence(message);
-        if (participant == undefined) {
-          participant = new Chachara.Participant({
-            id: fromParts[1],
-            room: thisRoom,
-            status: message.status,
-          });
+        // Per-room presence. Joined or exited
+        if (message.show == "join-room" || message.show == "exit-room") {
+          console.log("[XMPP] " + fromParts[1] + " " + message.show);
 
-          thisRoom.participants.add(participant);
+          newView.displayPresence(message);
+          if (participant == undefined) {
+            participant = new Chachara.Participant({
+              id: fromParts[1],
+              room: thisRoom,
+              show: message.show,
+            });
+
+            thisRoom.participants.add(participant);
+          }
+
+        // Global presence update, i.e. status updates
+        } else {
+          if (message.show == "offline") {
+            console.log("[XMPP] " + fromParts[1] + " went offline");
+          } else {
+            console.log("[XMPP] " + fromParts[1] + " changed status to " + message.show);
+            console.log("[XMPP] new status message: " + message.status);
+          }
         }
+
       });
 
       this.chatViews[room.id] = newView;
