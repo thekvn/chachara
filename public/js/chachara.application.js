@@ -182,6 +182,7 @@ $(function() {
         var thisRoom    = self.rooms.get(fromParts[0]);
         var participant = thisRoom.participants.get(fromParts[1])
 
+        newView.displayPresence(message);
         if (participant == undefined) {
           participant = new Chachara.Participant({
             id: fromParts[1],

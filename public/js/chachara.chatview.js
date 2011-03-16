@@ -39,19 +39,19 @@ $(function() {
       $(this.node).hide();
     },
 
-    // displayPresence: function(data) {
-    //   var fromParts = data.from.split("/");
-    //   var room      = fromParts[0];
-    //   var who       = fromParts[1];
-    //   var status    = data.status
+    displayPresence: function(data) {
+      var fromParts = data.from.split("/");
+      var room      = fromParts[0];
+      var who       = fromParts[1];
+      var status    = data.status
 
-    //   if (this.options.room === room) {
-    //     var userAction = (status == "online") ? "joined" : "left";
-    //     $(this.node).find(".primary-pane ul")
-    //        .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>");
-    //     $(this.node).find(".primary-pane").scrollTop(10000);
-    //   }
-    // },
+      if (this.room.id === room) {
+        var userAction = (status == "online") ? "joined" : "left";
+        $(this.node).find(".primary-pane ul")
+           .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>");
+        $(this.node).find(".primary-pane").scrollTop(10000);
+      }
+    },
 
     displayMessage: function(message) {
       var fromParts = message.from.split("/");
