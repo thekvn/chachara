@@ -34,6 +34,7 @@ $(function() {
       });
 
       this.client.bind("connect-ok", function(connectData) {
+        self.nick = window.localStorage.getItem("jid").split("@")[0];
         self.chat(connectData);
       });
 
