@@ -31,8 +31,14 @@ $(function() {
 
       $(this.el).html(dom);
 
+      if (window.localStorage) {
+        var storage = window.localStorage;
+        $(this.el).find(".jid").val(storage.getItem("jid"));
+        $(this.el).find(".rooms").val(storage.getItem("rooms"));
+      }
+
       dom.css("position", "relative")
-         .css("top", (($(window).height() - dom.height())/2) +"px")
+         .css("top", (($("#app").height() - dom.height())/2) + "px")
          .find("input:first").focus();
 
       return this;

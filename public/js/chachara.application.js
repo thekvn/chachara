@@ -20,7 +20,8 @@ $(function() {
 
       var dom = $("#app");
       dom.css("position", "relative")
-         .css("top", (($(window).height() - dom.height())/2) +"px");
+         .css("top", (($(window).height() - dom.height())/2) +"px")
+         .addClass("transparent");
 
       this.client.bind("connect-not-ok", function() {
         console.log("[App] connect-not-ok Presenting Signin Form")
@@ -69,6 +70,11 @@ $(function() {
         });
 
         this.signinView.bind('submit', function(data) {
+          if (window.localStorage) {
+            window.localStorage.setItem("jid", data.jid);
+            window.localStorage.setItem("rooms", data.rooms.join(","))
+          }
+
           self.client.authenticate(data);
           self.enableNotifications();
           self.authData = data;
@@ -91,6 +97,7 @@ $(function() {
       var tpl = _.template("#chat-view-template");
 
       $("#app").html($(tpl()).html());
+      $("#app").removeClass("transparent");
 
       this.client.bind("join-room", function(data) {
         self.createRoomView(data.room);
