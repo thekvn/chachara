@@ -39,7 +39,7 @@ $(function() {
 
       dom.css("position", "relative")
          .css("top", (($("#app").height() - dom.height())/2) + "px")
-         .find("input:first").focus();
+         .find('input[value=""]:first').focus();
 
       return this;
     },
