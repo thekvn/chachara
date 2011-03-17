@@ -84,7 +84,8 @@ var events = {
   },
 
   onJoinRom: function(xmppClient, message, callback){
-    xmppClient.join(message.room, function(room) {
+    xmppClient.join(message.room, function(room, websocket) {
+      websocket.send({ type: "join-room-ok", room: room.name });
 
       // Main reason for the workaround in renewing the websocket and making
       // it a property of the xmpp client instance is because I yet haven't

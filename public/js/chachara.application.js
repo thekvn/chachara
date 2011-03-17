@@ -103,7 +103,7 @@ $(function() {
         self.createRoomView(room);
       })
 
-      this.client.bind("join-room", function(data) {
+      this.client.bind("join-room-ok", function(data) {
         self.rooms.add(new Chachara.Room({id: data.room}));
       });
 

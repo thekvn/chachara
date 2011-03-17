@@ -91,7 +91,7 @@ Client.prototype.connect = function(jid, password, callback) {
     // No strict checking at the moment
     this.rooms[name] = new Room(this, name);
     this.rooms[name].join();
-    callback(this.rooms[name]);
+    callback(this.rooms[name], this.websocket);
   }
 
   Client.prototype.disconnect = function() {
