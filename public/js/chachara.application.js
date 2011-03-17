@@ -128,7 +128,8 @@ $(function() {
       var self    = this;
       var newView = new Chachara.ChatView({
         el: $("#chat-view-container")[0],
-        room: room
+        room: room,
+        app: this
       });
 
       newView.render();

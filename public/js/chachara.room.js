@@ -6,6 +6,9 @@ $(function() {
     },
     shortname: function() {
       return this.id.split("@")[0];
+    },
+    domain: function() {
+      return this.id.split("@")[1];
     }
   });
 });

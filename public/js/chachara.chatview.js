@@ -5,6 +5,7 @@ $(function() {
     initialize: function(options) {
       _.bindAll(this, "render", "onInput", "displayMessage");
       this.room = options.room;
+      this.app = options.app;
 
       this.id = "pane-" + this.room.shortname();
       this.node = "#" + this.id;
@@ -114,12 +115,19 @@ $(function() {
         var str = $(e.target).val();
         var matches;
 
-        // Match //join
+        // Match /join
         if (matches = str.match(/^\/join\s(.*)/)) {
           var roomName = matches[1];
-          this.trigger("join", roomName);
-          $(this.node).find(".chatinput").val("");
-          return true;
+          var roomJid = [roomName, this.room.domain()].join("@");
+
+          if (this.app.rooms.get(roomJid) == undefined) {
+            this.trigger("join", roomJid);
+            $(this.node).find(".chatinput").val("");
+            return true;
+          } else {
+            console.log("Already Joined Room")
+            return;
+          }
         }
 
         if (str.length > 0) {
