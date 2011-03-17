@@ -61,7 +61,6 @@ $(function() {
 
       var body = $("<div/>").text(message.body).html();
       body = body.replace(/\n/g, "<br/>");
-      body = body.replace(/\s/g, "&nbsp;");
 
       if (this.room.id === message.room) {
         ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
