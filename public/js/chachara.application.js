@@ -151,6 +151,10 @@ $(function() {
         }
       });
 
+      newView.bind("join", function(roomName) {
+        self.client.join(roomName);
+      });
+
       newView.bind("prevpane", function(current) {
         var views = _(self.chatViews).toArray();
         var currentIndex = views.indexOf(current);

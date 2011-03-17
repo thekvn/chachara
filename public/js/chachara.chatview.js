@@ -4,12 +4,9 @@ $(function() {
 
     initialize: function(options) {
       _.bindAll(this, "render", "onInput", "displayMessage");
-
       this.room = options.room;
-      console.log(this.room);
 
-      this.shortname = this.room.id.split("@")[0];
-      this.id = "pane-" + this.shortname;
+      this.id = "pane-" + this.room.shortname();
       this.node = "#" + this.id;
 
       this.participantsView = new Chachara.ParticipantsView({
@@ -22,7 +19,7 @@ $(function() {
       $(this.el).append(template);
       this.participantsView.el = $(this.node).find(".participants-pane");
 
-      $(this.node).find("span.current").text("#"+this.shortname);
+      $(this.node).find("span.current").text("#"+this.room.shortname());
       $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
       $(this.node).find(".primary-pane ul").append("<li>Joined " + this.options.room.id + "</li>")
@@ -101,8 +98,30 @@ $(function() {
     },
 
     onInput: function(e) {
+      // Prevpane
+      if (e.ctrlKey && e.which == '44') { /* < */
+        this.trigger("prevpane", this);
+      }
+
+      // Nextpane
+      if (e.ctrlKey && e.which == '46') { /* > */
+        e.stopPropagation();
+        this.trigger("nextpane", this);
+      }
+
+      // Submit message
       if (e.which == '13') {
         var str = $(e.target).val();
+        var matches;
+
+        // Match //join
+        if (matches = str.match(/^\/join\s(.*)/)) {
+          var roomName = matches[1];
+          this.trigger("join", roomName);
+          $(this.node).find(".chatinput").val("");
+          return true;
+        }
+
         if (str.length > 0) {
           var data = {
             type: "message",
@@ -112,15 +131,6 @@ $(function() {
           this.trigger("input", data);
           $(this.node).find(".chatinput").val("");
         }
-      }
-
-      if (e.ctrlKey && e.which == '44') { /* < */
-        this.trigger("prevpane", this);
-      }
-
-      if (e.ctrlKey && e.which == '46') { /* > */
-        e.stopPropagation();
-        this.trigger("nextpane", this);
       }
     }
   })
