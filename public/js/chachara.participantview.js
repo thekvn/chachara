@@ -3,7 +3,7 @@ $(function() {
     tagName: 'li',
     initialize: function() {
       _(this).bindAll('render');
-      this.model.bind("change", this.render());
+      this.model.bind("change", this.render);
       this.model.view = this;
     },
     render: function() {

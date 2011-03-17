@@ -193,7 +193,6 @@ $(function() {
         if (message.show == "join-room" || message.show == "exit-room") {
           console.log("[XMPP] " + fromParts[1] + " " + message.show);
 
-          newView.displayPresence(message);
           if (participant == undefined) {
             participant = new Chachara.Participant({
               id: fromParts[1],
@@ -202,7 +201,11 @@ $(function() {
             });
 
             thisRoom.participants.add(participant);
+          } else {
+            participant.set({show:message.show});
           }
+
+          newView.displayPresence(message);
 
         // Global presence update, i.e. status updates
         } else {

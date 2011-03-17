@@ -5,7 +5,6 @@ $(function() {
 
       this.participants = options.participants;
       this.participants.bind("add", this.addOne);
-      this.participants.bind("change", this.change);
     },
 
     addOne: function(participant) {
