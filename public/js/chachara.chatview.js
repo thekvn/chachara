@@ -46,7 +46,7 @@ $(function() {
       if (this.room.id === room) {
         var userAction = (action == "join-room") ? "joined" : "left";
         $(this.node).find(".primary-pane ul")
-           .append("<li class='presence'><b><span class='name'>" + who + "</span></b>" + userAction + " the room</li>");
+           .append("<li class='presence'><b class='meta'><span class='name'>" + who + "</span></b><b class='msg'>" + userAction + " the room</b></li>");
         $(this.node).find(".primary-pane").scrollTop(10000);
       }
     },
@@ -64,10 +64,10 @@ $(function() {
       body = body.replace(/\s/g, "&nbsp;");
 
       if (this.room.id === message.room) {
-        ul.append("<li><b class='name'>" + name + "</b><b class='msg'>" + body + "</b></li>");
+        ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
 
         if (message.html) {
-          ul.append("<li><b class='name'>" + name + "</b><b class='msg'>" + html + "</b></li>");
+          ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + html + "</b></li>");
         }
 
         $(this.node).find(".primary-pane").scrollTop(100000);
@@ -86,7 +86,7 @@ $(function() {
       var html = message.html;
 
       if (this.room.id === message.room) {
-        $(this.node).find(".primary-pane ul").append("<li><b class='name'>" + name + "</b><b class='msg embed'>" + html + "</b></li>");
+        $(this.node).find(".primary-pane ul").append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg embed'>" + html + "</b></li>");
         $(this.node).find(".primary-pane").scrollTop(10000);
       }
     },
