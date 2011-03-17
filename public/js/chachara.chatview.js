@@ -129,6 +129,26 @@ $(function() {
           }
         }
 
+        // Match #room
+        if (matches = str.match(/^#([a-z0-9]+)\s(.*)$/)) {
+          var want = matches[1];
+          var msg = matches[2];
+
+          var roomMatcher = new RegExp("^"+want+"@.*$");
+          var result = this.app.rooms.filter(function(room) {
+            return room.get("id").match(roomMatcher);
+          });
+          var room = result[0];
+          var data = {
+            type:"message",
+            body: msg,
+            room: room.get("id")
+          };
+          this.trigger("input", data);
+          $(this.node).find(".chatinput").val("");
+          return true;
+        }
+
         if (str.length > 0) {
           var data = {
             type: "message",
