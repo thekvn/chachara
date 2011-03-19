@@ -4,10 +4,23 @@ var util = require("util"),
 
 // Make client instances store a reference to its websocket client
 function Client(websocket) {
-  this.connection = null;
-  this.websocket  = websocket;
-  this.defaultShow = 'chat';
+  this.connection    = null;
+  this.websocket     = websocket;
+  this.defaultShow   = 'chat';
   this.defaultStatus = 'Cháchara';
+  this.cachedShow    = null;
+  this.cachedStatus  = null;
+
+  // Testing mode, few seconds!
+  this.awayTimeout = {
+    milliseconds: 5000,
+    timeout: null
+  };
+
+  this.disconnectTimeout = {
+    milliseconds: 30000,
+    timeout: null
+  };
 }
 
 Client.prototype.connect = function(jid, password, callback) {

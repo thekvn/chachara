@@ -49,6 +49,21 @@ var events = {
     if (xmppClient.connection == null) {
       callback( { type:"connect-not-ok" } );
     } else {
+
+      if (xmppClient.disconnectTimeout.timeout != undefined) {
+        xmppClient.setStatus(
+          xmppClient.cachedShow   || xmppClient.defaultShow,
+          xmppClient.cachedStatus || xmppClient.defaultStatus
+        );
+
+        clearTimeout(xmppClient.disconnectTimeout.timeout);
+        xmppClient.disconnectTimeout.timeout = null;
+
+      } else if (xmppClient.awayTimeout.timeout != undefined) {
+        clearTimeout(xmppClient.awayTimeout.timeout);
+        xmppClient.awayTimeout.timeout = null;
+      }
+
       var rooms = [];
       for (roomName in xmppClient.rooms) rooms.push(roomName);
 
@@ -118,6 +133,8 @@ var events = {
   },
 
   onSetStatus: function(xmppClient, message){
+    xmppClient.cachedShow   = message.show;
+    xmppClient.cachedStatus = message.status;
     xmppClient.setStatus(message.show, message.status);
   }
 
@@ -171,9 +188,18 @@ socket.on('connection', function(client) {
 
   client.on("disconnect", function() {
     if (xmppClient != null && xmppClient.connection != null) {
-      // xmppClient.disconnect();
-      // delete xmppClient;
-      // delete connections[identifier];
+      xmppClient.awayTimeout.timeout = setTimeout(function(){
+
+        xmppClient.setStatus('xa', '');
+        xmppClient.awayTimeout.timeout = null;
+        xmppClient.disconnectTimeout.timeout = setTimeout(function(){
+
+          xmppClient.disconnect();
+          delete xmppClient;
+          delete connections[identifier];
+
+        }, xmppClient.disconnectTimeout.milliseconds);
+      }, xmppClient.awayTimeout.milliseconds);
     }
   });
 
