@@ -130,7 +130,7 @@ $(function() {
         }
 
         // Match #room
-        if (matches = str.match(/^#([a-z0-9]+)\s(.*)$/)) {
+        else if (matches = str.match(/^#([a-z0-9]+)\s(.*)$/)) {
           var want = matches[1];
           var msg = matches[2];
 
@@ -147,6 +147,25 @@ $(function() {
           this.trigger("input", data);
           $(this.node).find(".chatinput").val("");
           return true;
+        }
+
+        // Match /status
+        else if (matches = str.match(/^\/status\s(chat|xa|dnd)(\s?.*)$/)) {
+
+          if (matches == undefined) {
+            console.log("Unrecognized status")
+            return;
+          } else {
+            var data = {
+              type   :"set-status",
+              show   : matches[1],
+              status : $.trim(matches[2])
+            };
+
+            this.trigger("input", data);
+            $(this.node).find(".chatinput").val("");
+            return true;
+          }
         }
 
         if (str.length > 0) {

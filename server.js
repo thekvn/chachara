@@ -117,6 +117,10 @@ var events = {
     });
   },
 
+  onSetStatus: function(xmppClient, message){
+    xmppClient.setStatus(message.show, message.status);
+  }
+
 }
 
 
@@ -156,6 +160,9 @@ socket.on('connection', function(client) {
       break;
     case 'message':
       events.onMessage(xmppClient, message, sendMessage);
+      break;
+    case 'set-status':
+      events.onSetStatus(xmppClient, message);
       break;
     default:
       console.log("Unknown message received.");

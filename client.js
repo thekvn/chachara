@@ -7,7 +7,7 @@ function Client(websocket) {
   this.connection = null;
   this.websocket  = websocket;
   this.defaultShow = 'chat';
-  this.defaultStatus = 'Cháchara!';
+  this.defaultStatus = 'Cháchara';
 }
 
 Client.prototype.connect = function(jid, password, callback) {
@@ -32,20 +32,20 @@ Client.prototype.connect = function(jid, password, callback) {
     else console.log(e);
   });
 
+  self.setStatus = function (show, status) {
+    var elem = new xmpp.Element('presence');
+    elem.c('show').t(show);
+    elem.c('status').t(status);
+    self.connection.send(elem);
+  };
+
   function onOnline() {
     self.connection.on('stanza', onStanza);
-    broadcastStatus();
+    self.setStatus(self.defaultShow, self.defaultStatus);
 
     if (callback != undefined) {
       callback();
     }
-  }
-
-  function broadcastStatus() {
-    var elem = new xmpp.Element('presence');
-    elem.c('show').t(self.defaultShow);
-    elem.c('status').t(self.defaultStatus);
-    self.connection.send(elem);
   }
 
   // TODO refactor
@@ -68,7 +68,6 @@ Client.prototype.connect = function(jid, password, callback) {
       }
 
     } else if (stanza.name == "presence") {
-
       var fromParts = stanza.attrs.from.split('/');
       var room = fromParts[0];
       var nick = fromParts[1];
