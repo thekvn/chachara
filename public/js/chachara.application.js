@@ -18,6 +18,7 @@ $(function() {
 
       this.useNotifications = false;
       this.nick = null;
+      this.mentionMatcher = null;
     },
 
     init: function() {
@@ -86,6 +87,7 @@ $(function() {
           console.log("[App] Initiating Chat");
           self.signinView.dismiss();
           self.nick = self.authData.jid.split("@")[0];
+          self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
           self.authData["do-join"] = true;
           self.chat(self.authData);
         });
@@ -237,7 +239,7 @@ $(function() {
 
     displayNotification: function(message) {
       if (window.webkitNotifications.checkPermission() == 0) {
-        if (message.body.indexOf(this.nick) != -1 && message.from.indexOf(this.nick) == -1) {
+        if (message.body.match(this.mentionMatcher) != undefined && message.from.indexOf(this.nick) == -1){
           var n = window.webkitNotifications.createNotification('', message.from, message.body);
           n.show();
           setTimeout(function(){n.cancel()}, 5000);

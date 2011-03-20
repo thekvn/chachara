@@ -63,7 +63,12 @@ $(function() {
       body = body.replace(/\n/g, "<br/>");
 
       if (this.room.id === message.room) {
-        ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+        if (matches = body.match(this.app.mentionMatcher)) {
+          body = body.replace(matches[0], "<em>" + matches[0] + "</em>");
+          ul.append("<li class='mention'><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+        } else {
+          ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+        }
 
         if (message.html) {
           ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + html + "</b></li>");
