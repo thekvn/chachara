@@ -23,4 +23,4 @@ var Chachara = {
 
     Backbone.history.start();
   }
-}
+};

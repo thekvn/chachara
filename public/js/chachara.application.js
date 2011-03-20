@@ -30,7 +30,7 @@ $(function() {
          .addClass("transparent");
 
       this.client.bind("connect-not-ok", function() {
-        console.log("[App] connect-not-ok Presenting Signin Form")
+        console.log("[App] connect-not-ok Presenting Signin Form");
         self.signin();
       });
 
@@ -40,7 +40,7 @@ $(function() {
       });
 
       this.client.bind("disconnect", function() {
-        console.log("[App] Disconnected, Presenting Signin Form")
+        console.log("[App] Disconnected, Presenting Signin Form");
         self.signin();
       });
 
@@ -61,20 +61,20 @@ $(function() {
     },
 
     signin: function() {
-      if (this.signinView == undefined) {
+      if (this.signinView === undefined) {
         var self = this;
         this.signinView = new Chachara.SigninView();
         this.signinView.render();
 
         this.client.bind("auth-not-ok", function(message) {
-          console.log("[App] auth-not-ok Presenting Signin Form")
+          console.log("[App] auth-not-ok Presenting Signin Form");
           self.signinView.presentError("Authentication Failed.");
         });
 
         this.signinView.bind('submit', function(data) {
           if (window.localStorage) {
             window.localStorage.setItem("jid", data.jid);
-            window.localStorage.setItem("rooms", data.rooms.join(","))
+            window.localStorage.setItem("rooms", data.rooms.join(","));
           }
 
           self.client.authenticate(data);
@@ -103,7 +103,7 @@ $(function() {
 
       self.rooms.bind("add", function(room) {
         self.createRoomView(room);
-      })
+      });
 
       this.client.bind("join-room-ok", function(data) {
         self.rooms.add(new Chachara.Room({id: data.room}));
@@ -189,17 +189,17 @@ $(function() {
 
         var fromParts   = message.from.split(/\//);
         var thisRoom    = self.rooms.get(fromParts[0]);
-        var participant = thisRoom.participants.get(fromParts[1])
+        var participant = thisRoom.participants.get(fromParts[1]);
 
         // Per-room presence. Joined or exited
-        if (message.show == "join-room" || message.show == "exit-room") {
+        if (message.show === "join-room" || message.show == "exit-room") {
           console.log("[XMPP] " + fromParts[1] + " " + message.show);
 
-          if (participant == undefined) {
+          if (participant === undefined) {
             participant = new Chachara.Participant({
               id: fromParts[1],
               room: thisRoom,
-              show: message.show,
+              show: message.show
             });
 
             thisRoom.participants.add(participant);
@@ -224,7 +224,9 @@ $(function() {
       this.chatViews[room.id] = newView;
 
       for (var k in this.chatViews) {
-        this.chatViews[k].hide();
+        if (this.hasOwnProperty(k)) {
+          this.chatViews[k].hide();
+        }
       }
 
       newView.show();
@@ -242,9 +244,11 @@ $(function() {
         if (message.body.match(this.mentionMatcher) != undefined && message.from.indexOf(this.nick) == -1){
           var n = window.webkitNotifications.createNotification('', message.from, message.body);
           n.show();
-          setTimeout(function(){n.cancel()}, 5000);
+          setTimeout(function() { 
+            n.cancel();
+          }, 5000);
         }
       }
     }
-  })
+  });
 });
