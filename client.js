@@ -78,6 +78,7 @@ Client.prototype.connect = function(jid, password, callback) {
       } else if (stanza.attrs.type == "chat") {
         // Implement private messages
         console.log("message!");
+        console.log(util.inspect(stanza, false, 10));
       }
 
     } else if (stanza.name == "presence") {
@@ -90,6 +91,7 @@ Client.prototype.connect = function(jid, password, callback) {
       }
 
     } else if (stanza.name == "iq") {
+      console.log(util.inspect(stanza, false, 10));
       // Handle iqs in the near future
     }
   }
