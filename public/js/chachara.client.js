@@ -1,7 +1,7 @@
 Chachara.Client = function(options) {
   options || (options ={});
   this.initialize(options);
-}
+};
 
 _.extend(Chachara.Client.prototype, Backbone.Events, {
   initialize: function(options) {
@@ -35,7 +35,7 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
 
     this.socket.on('message', function(message) {
       self.log("Received [" + message.type + "]");
-      self.trigger(message.type, message)
+      self.trigger(message.type, message);
     });
   },
 
@@ -45,8 +45,8 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
 
   authenticate: function(creds) {
     var data = creds;
-    data["type"] = "auth";
-    data["sid"]  = this.sessionCookie;
+    data.type = "auth";
+    data.sid  = this.sessionCookie;
 
     this.send(data);
   },
@@ -55,7 +55,7 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     var data = {
       type: "join-room",
       room: room
-    }
+    };
     this.send(data);
     this.trigger("join-room", {room:room});
   },
@@ -68,7 +68,7 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     var data = {
       type: 'connect',
       sid: this.sessionCookie
-    }
+    };
 
     this.send(data);
   },
@@ -85,8 +85,9 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
       x = cookies[i].substr(0, cookies[i].indexOf("="));
       y = cookies[i].substr(cookies[i].indexOf("=") + 1);
       x = x.replace(/^\s+|\s+$/g, "");
-      if (x == name)
+      if (x == name) {
         return unescape(y);
+      }
     }
   }
 });

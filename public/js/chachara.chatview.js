@@ -45,8 +45,9 @@ $(function() {
 
       if (this.room.id === room) {
         var userAction = (action == "join-room") ? "joined" : "left";
-        $(this.node).find(".primary-pane ul")
-           .append("<li class='presence'><b class='meta'><span class='name'>" + who + "</span></b><b class='msg'>" + userAction + " the room</b></li>");
+        $(this.node)
+          .find(".primary-pane ul")
+          .append("<li class='presence'><b class='meta'><span class='name'>" + who + "</span></b><b class='msg'>" + userAction + " the room</b></li>");
         $(this.node).find(".primary-pane").scrollTop(10000);
       }
     },

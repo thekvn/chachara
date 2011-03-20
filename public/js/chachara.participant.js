@@ -4,4 +4,4 @@ $(function() {
       return this.id;
     }
   });
-})
+});
