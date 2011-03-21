@@ -114,14 +114,14 @@ var events = {
         if (room.buffer.length > room.bufferSize) room.buffer.shift();
 
         websocket.send(msg);
-      })
+      });
 
       room.on("presence", function(websocket, msg) {
         msg.type = "presence";
         room.participants.push(msg);
 
         websocket.send(msg);
-      })
+      });
 
     });
   },
@@ -155,6 +155,9 @@ socket.on('connection', function(client) {
       xmppClient.websocket = client;
     } else {
       xmppClient = new Client(client);
+      xmppClient.on("avatar", function(websocket, msg) {
+        websocket.send(msg);
+      });
     }
   }
 

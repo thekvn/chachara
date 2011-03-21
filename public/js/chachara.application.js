@@ -178,6 +178,11 @@ $(function() {
         }
       });
 
+      this.client.bind("avatar", function(message){
+        // Need to populate global participants and somehow link them to per-
+        // room participants and update avatars appropriately
+      });
+
       this.client.bind("message", function(message) {
         if (message.room == room.id) {
           self.messageHandler.processMessage(message);
@@ -244,7 +249,7 @@ $(function() {
         if (message.body.match(this.mentionMatcher) != undefined && message.from.indexOf(this.nick) == -1){
           var n = window.webkitNotifications.createNotification('', message.from, message.body);
           n.show();
-          setTimeout(function() { 
+          setTimeout(function() {
             n.cancel();
           }, 5000);
         }

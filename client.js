@@ -1,6 +1,7 @@
 var util = require("util"),
-   xmpp = require("node-xmpp"),
-   Room = require("./room.js");
+    xmpp = require("node-xmpp"),
+    Room = require("./room.js"),
+    EventEmitter = require('events').EventEmitter;
 
 // Make client instances store a reference to its websocket client
 function Client(websocket) {
@@ -22,6 +23,8 @@ function Client(websocket) {
     timeout: null
   };
 }
+
+util.inherits(Client, EventEmitter);
 
 Client.prototype.connect = function(jid, password, callback) {
   var self = this;
@@ -82,23 +85,26 @@ Client.prototype.connect = function(jid, password, callback) {
       }
 
     } else if (stanza.name == "presence") {
-      var fromParts = stanza.attrs.from.split('/');
-      var room = fromParts[0];
-      var nick = fromParts[1];
 
-      if (self.rooms[room]) {
-        self.rooms[room]['onPresence'] && self.rooms[room].onPresence(stanza);
+      if (stanza.getChild('x').getChild('photo')) {
+        self.onAvatarAvailable(stanza);
+      } else {
+        var fromParts = stanza.attrs.from.split('/');
+        var room = fromParts[0];
+        var nick = fromParts[1];
+
+        if (self.rooms[room]) {
+          self.rooms[room]['onPresence'] && self.rooms[room].onPresence(stanza);
+        }
       }
 
     } else if (stanza.name == "iq") {
-      console.log(util.inspect(stanza, false, 10));
-      // Handle iqs in the near future
+      if (stanza.attrs.id == "v3") {
+        self.onAvatar(stanza);
+      }
     }
   }
 
-  function onAuthFailure(){
-
-  }
 
   // Connect to XMPP.
   Client.prototype.join = function(name, callback) {
@@ -107,6 +113,7 @@ Client.prototype.connect = function(jid, password, callback) {
     this.rooms[name].join();
     callback(this.rooms[name], this.websocket);
   }
+
 
   Client.prototype.disconnect = function() {
     if (this.connection) {
@@ -117,9 +124,34 @@ Client.prototype.connect = function(jid, password, callback) {
     }
   }
 
+
   self.connection.on("error", function(err) {
     console.log(util.inspect(err));
   });
+
+
+  Client.prototype.onAvatarAvailable = function(stanza) {
+    var elem = new xmpp.Element("iq", {
+      type : "get",
+      from : self.jid,
+      to   : stanza.attrs.from.split("/")[0],
+      id   : "v3"
+    });
+    elem.c("vCard", { xmlns : "vcard-temp" });
+    self.connection.send(elem);
+  }
+
+
+  Client.prototype.onAvatar = function(stanza) {
+    photoNode = stanza.getChild("vCard").getChild("PHOTO");
+
+    self.emit("avatar", self.websocket, {
+      type     : 'avatar',
+      from     : stanza.attrs.from,
+      fileType : photoNode.getChild("TYPE").getText(),
+      binval   : photoNode.getChild("BINVAL").getText().split("\n").join("")
+    });
+  }
 };
 
 module.exports = Client;
