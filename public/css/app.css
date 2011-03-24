@@ -1,3 +1,6 @@
+/*
+ * Color Scheme: http://www.colourlovers.com/palette/694737/Thought_Provoking
+ */
 html,body { margin: 0; padding: 0; }
 
 body {
@@ -5,6 +8,8 @@ body {
   background-size: auto 100%;
   margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; color: #FFF;
 }
+
+body a { color: #ECD078;}
 
 #app {
   background-color: rgba(0,0,0,0.9);
