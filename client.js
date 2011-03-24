@@ -86,7 +86,7 @@ Client.prototype.connect = function(jid, password, callback) {
 
     } else if (stanza.name == "presence") {
 
-      if (stanza.getChild('x').getChild('photo')) {
+      if (stanza.getChild('x') !== undefined && stanza.getChild('x').getChild('photo') !== undefined) {
         self.onAvatarAvailable(stanza);
       } else {
         var fromParts = stanza.attrs.from.split('/');
@@ -141,9 +141,12 @@ Client.prototype.connect = function(jid, password, callback) {
     self.connection.send(elem);
   }
 
-
   Client.prototype.onAvatar = function(stanza) {
-    photoNode = stanza.getChild("vCard").getChild("PHOTO");
+    var vCardNode = stanza.getChild("vCard");
+    if (vCardNode === undefined) return false;
+
+    var photoNode = vCardNode.getChild("PHOTO");
+    if (photoNode === undefined) return false;
 
     self.emit("avatar", self.websocket, {
       type     : 'avatar',
