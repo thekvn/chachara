@@ -175,10 +175,21 @@ $(function() {
         }
 
         // Match /audio (on|off)
-        else if (matches = str.match(/^\/audio\s(on|off)$/)) {
-          audio = (matches[1] == "on") ? "true" : "false"
-          window.localStorage.setItem("audio", audio);
-          this.app.audioEnabled = audio;
+        else if (matches = str.match(/^\/audio\s(mentions|messages|all)\s(on|off)$/)) {
+          var audio = (matches[2] == "on") ? "true" : "false";
+
+          if (matches[1] == "mentions") {
+            window.localStorage.setItem("audio-on-mention", audio);
+            this.app.mentionSound.enabled = audio;
+          } else if (matches[1] == "messages") {
+            window.localStorage.setItem("audio-on-message", audio);
+            this.app.messageSound.enabled = audio;
+          } else {
+            window.localStorage.setItem("audio-on-mention", audio);
+            window.localStorage.setItem("audio-on-message", audio);
+            this.app.mentionSound.enabled = audio;
+            this.app.messageSound.enabled = audio;
+          }
 
           $(this.node).find(".chatinput").val("");
           return true;

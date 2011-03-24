@@ -20,11 +20,15 @@ $(function() {
       this.nick = null;
       this.mentionMatcher = null;
 
-      this.audioEnabled = window.localStorage.getItem("audio") || "false";
-      this.sounds = {
-        message: new Audio("/audio/message.mp3"),
-        mention: new Audio("/audio/mention.mp3")
-      }
+      this.messageSound = {
+        source  : new Audio("/audio/message.mp3"),
+        enabled : window.localStorage.getItem("audio-on-message") || "true"
+      };
+
+      this.mentionSound = {
+        source  : new Audio("/audio/mention.mp3"),
+        enabled : window.localStorage.getItem("audio-on-mention") || "true"
+      };
     },
 
     init: function() {
@@ -42,6 +46,7 @@ $(function() {
 
       this.client.bind("connect-ok", function(connectData) {
         self.nick = window.localStorage.getItem("jid").split("@")[0];
+        self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
         self.chat(connectData);
       });
 
@@ -264,12 +269,13 @@ $(function() {
     },
 
     audioNotification: function(message){
-      if (this.audioEnabled == "true") {
-        if (message.body.match(this.mentionMatcher) == undefined) {
-          this.sounds.message.play();
-        } else {
-          this.sounds.mention.play();
-        }
+      var mentioned = (message.body.match(this.mentionMatcher) != undefined);
+
+      if (!mentioned && this.messageSound.enabled == "true") {
+        this.messageSound.source.play();
+      } else if (mentioned && this.mentionSound.enabled == "true") {
+        console.log("should play mention");
+        this.mentionSound.source.play();
       }
     }
   });
