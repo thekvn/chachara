@@ -68,8 +68,8 @@ var events = {
       for (roomName in xmppClient.rooms) rooms.push(roomName);
 
       callback({
-        type:"connect-ok",
-        rooms: rooms
+        type  : "connect-ok",
+        rooms : rooms
       });
 
       Object.keys(xmppClient.rooms).forEach(function(roomName) {
@@ -108,18 +108,16 @@ var events = {
       // handlers definition 'dynamic' so it always has access to the latest
       // client that is given on socket.onConnection
       room.on("message", function(websocket, msg) {
-        msg.type = "message";
         msg.room = room.name;
         room.buffer.push(msg);
-        if (room.buffer.length > room.bufferSize) room.buffer.shift();
-
+        if (room.buffer.length > room.bufferSize) {
+          room.buffer.shift();
+        }
         websocket.send(msg);
       });
 
       room.on("presence", function(websocket, msg) {
-        msg.type = "presence";
         room.participants.push(msg);
-
         websocket.send(msg);
       });
 
@@ -155,7 +153,17 @@ socket.on('connection', function(client) {
       xmppClient.websocket = client;
     } else {
       xmppClient = new Client(client);
+
       xmppClient.on("avatar", function(websocket, msg) {
+        websocket.send(msg);
+      });
+
+      xmppClient.on("message", function(websocket, msg) {
+        xmppClient.buffer.push(msg);
+        if (xmppClient.buffer.length > xmppClient.bufferSize) {
+          xmppClient.buffer.shift();
+        }
+
         websocket.send(msg);
       });
     }

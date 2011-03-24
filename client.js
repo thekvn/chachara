@@ -11,6 +11,8 @@ function Client(websocket) {
   this.defaultStatus = 'Cháchara';
   this.cachedShow    = null;
   this.cachedStatus  = null;
+  this.buffer = [];
+  this.bufferSize = 20;
 
   // Testing mode, few seconds!
   this.awayTimeout = {
@@ -79,9 +81,7 @@ Client.prototype.connect = function(jid, password, callback) {
           self.rooms[room]['onMessage'] && self.rooms[room].onMessage(stanza);
         }
       } else if (stanza.attrs.type == "chat") {
-        // Implement private messages
-        console.log("message!");
-        console.log(util.inspect(stanza, false, 10));
+        self.onMessage(stanza);
       }
 
     } else if (stanza.name == "presence") {
@@ -150,6 +150,15 @@ Client.prototype.connect = function(jid, password, callback) {
       from     : stanza.attrs.from,
       fileType : photoNode.getChild("TYPE").getText(),
       binval   : photoNode.getChild("BINVAL").getText().split("\n").join("")
+    });
+  }
+
+  Client.prototype.onMessage = function(stanza) {
+    this.emit("message", this.websocket, {
+      type : "chat",
+      to   : stanza.attrs.to,
+      from : stanza.attrs.from,
+      body : stanza.getChild("body").getText()
     });
   }
 };

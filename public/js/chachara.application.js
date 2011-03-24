@@ -55,7 +55,12 @@ $(function() {
         self.signin();
       });
 
-      this.client.bind("message", function(message) {
+      this.client.bind("chat", function(message) {
+        console.log("[Private Message Received]");
+        console.log(message);
+      });
+
+      this.client.bind("groupchat", function(message) {
         self.displayNotification(message);
         self.audioNotification(message);
       });
@@ -66,7 +71,7 @@ $(function() {
       this.secondaryView = new Chachara.SecondaryView({el: $("#secondary-view")[0] });
       this.secondaryView.render();
 
-      this.client.bind("message", function(message) {
+      this.client.bind("groupchat", function(message) {
         self.secondaryView.displayMessage(message);
       });
 
@@ -195,7 +200,7 @@ $(function() {
         // room participants and update avatars appropriately
       });
 
-      this.client.bind("message", function(message) {
+      this.client.bind("groupchat", function(message) {
         if (message.room == room.id) {
           self.messageHandler.processMessage(message);
         }
@@ -274,7 +279,6 @@ $(function() {
       if (!mentioned && this.messageSound.enabled == "true") {
         this.messageSound.source.play();
       } else if (mentioned && this.mentionSound.enabled == "true") {
-        console.log("should play mention");
         this.mentionSound.source.play();
       }
     }
