@@ -174,6 +174,16 @@ $(function() {
           }
         }
 
+        // Match /audio (on|off)
+        else if (matches = str.match(/^\/audio\s(on|off)$/)) {
+          audio = (matches[1] == "on") ? "true" : "false"
+          window.localStorage.setItem("audio", audio);
+          this.app.audioEnabled = audio;
+
+          $(this.node).find(".chatinput").val("");
+          return true;
+        }
+
         if (str.length > 0) {
           var data = {
             type: "message",

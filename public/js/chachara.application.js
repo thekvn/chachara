@@ -19,6 +19,12 @@ $(function() {
       this.useNotifications = false;
       this.nick = null;
       this.mentionMatcher = null;
+
+      this.audioEnabled = window.localStorage.getItem("audio") || "false";
+      this.sounds = {
+        message: new Audio("/audio/message.mp3"),
+        mention: new Audio("/audio/mention.mp3")
+      }
     },
 
     init: function() {
@@ -46,6 +52,7 @@ $(function() {
 
       this.client.bind("message", function(message) {
         self.displayNotification(message);
+        self.audioNotification(message);
       });
 
       var tpl = $(_.template("#chat-view-template")());
@@ -252,6 +259,16 @@ $(function() {
           setTimeout(function() {
             n.cancel();
           }, 5000);
+        }
+      }
+    },
+
+    audioNotification: function(message){
+      if (this.audioEnabled == "true") {
+        if (message.body.match(this.mentionMatcher) == undefined) {
+          this.sounds.message.play();
+        } else {
+          this.sounds.mention.play();
         }
       }
     }
