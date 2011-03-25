@@ -71,6 +71,26 @@ Chachara.InstagramHandler = function(name) {
   this.regex = /^.*instagr.am\/p\/.*/;
 }
 
+Chachara.XkcdHandler = function(name) {
+  this.name = name;
+  this.regex = /^.*xkcd.com\/.*/;
+}
+
+Chachara.ImgurHandler = function(name) {
+  this.name = name;
+  this.regex = /^.*imgur.com\/.*/;
+}
+
+Chachara.SkitchHandler = function(name) {
+  this.name = name;
+  this.regex = /^.*skitch.com\/.*/;
+}
+
+Chachara.FlickrHandler = function(name) {
+  this.name = name;
+  this.regex = /^.*(flickr.com|flic.kr)\/.*/;
+}
+
 // Do more than fixing newlines .html() trick?
 Chachara.Sanitizer = function(message) {
   this.name = name;

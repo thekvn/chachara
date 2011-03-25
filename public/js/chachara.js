@@ -12,7 +12,11 @@ var Chachara = {
         new Chachara.YoutubeHandler('youtube'),
         new Chachara.CloudAppHandler('cloudapp'),
         new Chachara.TwitterHandler('twitter'),
-        new Chachara.InstagramHandler('instagram')
+        new Chachara.InstagramHandler('instagram'),
+        new Chachara.XkcdHandler('XKCD'),
+        new Chachara.ImgurHandler("imgur.com"),
+        new Chachara.SkitchHandler("skitch"),
+        new Chachara.FlickrHandler("flickr")        
       ],
       bodyHandlers : [
         new Chachara.Sanitizer("Body Sanitizer"),
