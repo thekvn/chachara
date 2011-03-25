@@ -157,6 +157,11 @@ Client.prototype.connect = function(jid, password, callback) {
   }
 
   Client.prototype.onMessage = function(stanza) {
+    if (stanza.getChild("body") == undefined) {
+      console.log("It's gonna crash!");
+      console.log(util.inspect(stanza, false, 10));
+    }
+
     this.emit("message", this.websocket, {
       type : "chat",
       to   : stanza.attrs.to,
