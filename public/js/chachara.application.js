@@ -72,7 +72,8 @@ $(function() {
       this.secondaryView.render();
 
       this.client.bind("groupchat", function(message) {
-        self.secondaryView.displayMessage(message);
+        body = self.messageHandler.processBody(message);                  
+        self.secondaryView.displayMessage(message, body);
       });
 
     },
@@ -202,9 +203,11 @@ $(function() {
 
       this.client.bind("groupchat", function(message) {
         if (message.room == room.id) {
-          self.messageHandler.processMessage(message);
+          self.messageHandler.processEmbedded(message);
         }
-        newView.displayMessage(message);
+        
+        body = self.messageHandler.processBody(message);                  
+        newView.displayMessage(message, body);
       });
 
       this.client.bind("presence", function(message) {

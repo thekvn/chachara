@@ -52,17 +52,13 @@ $(function() {
       }
     },
 
-    displayMessage: function(message) {
+    displayMessage: function(message, body) {
       var fromParts = message.from.split("/");
       var room = fromParts[0].split("@")[0];
       var name = fromParts[1];
       var html = message.html;
 
       var ul = $(this.node).find(".primary-pane ul");
-
-      var body = $("<div/>").text(message.body).html();
-      body = body.replace(/\n/g, "<br/>");
-      body = this._replaceUrlWithLinks(body);
 
       if (this.room.id === message.room) {
         if (matches = body.match(this.app.mentionMatcher)) {
@@ -206,11 +202,6 @@ $(function() {
           $(this.node).find(".chatinput").val("");
         }
       }
-    },
-
-    _replaceUrlWithLinks:function(body) {
-      var urlexp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      return body.replace(urlexp, "<a href='$1' target='_blank'>$1</a>");
     }
   });
 });
