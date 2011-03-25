@@ -207,9 +207,10 @@ $(function() {
         }
       }
     },
+
     _replaceUrlWithLinks:function(body) {
       var urlexp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      return body.replace(urlexp, "<a href='$1'>$1</a>"); 
+      return body.replace(urlexp, "<a href='$1' target='_blank'>$1</a>");
     }
   });
 });
