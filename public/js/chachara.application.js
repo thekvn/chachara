@@ -55,11 +55,6 @@ $(function() {
         self.signin();
       });
 
-      this.client.bind("chat", function(message) {
-        console.log("[Private Message Received]");
-        console.log(message);
-      });
-
       this.client.bind("groupchat", function(message) {
         self.displayNotification(message);
         self.audioNotification(message);
@@ -72,8 +67,18 @@ $(function() {
       this.secondaryView.render();
 
       this.client.bind("groupchat", function(message) {
-        body = self.messageHandler.processBody(message);                  
-        self.secondaryView.displayMessage(message, body);
+        message.processedBody = self.messageHandler.processBody(message);                  
+        self.secondaryView.displayMessage(message);
+      });
+
+      this.client.bind("chat", function(message) {
+        console.log("[Private Message Received]");
+				self.secondaryView.displayPrivateMessage(message);
+
+				_(self.chatViews).each(function(view, key) {
+					console.log(view);
+					view.displayPrivateMessage(message);
+				});
       });
 
     },
@@ -206,7 +211,7 @@ $(function() {
           self.messageHandler.processEmbedded(message);
         }
         
-        body = self.messageHandler.processBody(message);                  
+        var body = self.messageHandler.processBody(message);                  
         newView.displayMessage(message, body);
       });
 

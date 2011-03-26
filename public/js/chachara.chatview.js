@@ -74,12 +74,22 @@ $(function() {
 
         $(this.node).find(".primary-pane").scrollTop(100000);
       }
-
-      // $(this.node)
-      //   .find(".secondary-pane ul")
-      //   .append("<li><b class='room'>#" + room + "</b> <b class='name'>" + name + "</b><b class='msg'> " + body + "</b></li>")
-      //   .scrollTop(100000);
     },
+
+		displayPrivateMessage: function(message) {
+			// We're experimenting with not having this in the chatview for now. I found it awkward
+
+			/*
+      var fromParts = message.from.split("@");
+			var name = fromParts[0]
+			var body = message.body;
+
+      $(this.node)
+        .find(".primary-pane ul")
+        .append("<li class='private-message'><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'> " + body + "</b></li>");
+        $(this.node).scrollTop(100000);
+			*/
+		},
 
     displayEmbedly: function(message) {
       var fromParts = message.from.split("/");

@@ -73,6 +73,7 @@ body a { color: #ECD078;}
 .chat-view ul li b.msg { 
   padding-left: 10px;
   font-weight: normal;
+	padding-bottom: 3px;
 }
 .chat-view .embed { margin-bottom: 0.5em; }
 .chat-view ul li b.msg.embed object { overflow: hidden; display: block; background: #000; padding: 5px; overflow: hidden; }
@@ -88,6 +89,7 @@ body a { color: #ECD078;}
 .chat-view .primary-pane b.name { 
   width: 140px;
 }
+
 
 .chat-view .participants-pane {
   margin-right: -200px;
@@ -113,6 +115,9 @@ body a { color: #ECD078;}
 #secondary-view b.msg { display: table-cell; font-weight: normal; padding-left: 10px;}
 #secondary-view b.name { color: #D95B43; }
 #secondary-view b.room { color: #444; font-weight: normal; font-size: 12px; }
+
+#secondary-view li.private-message { background: #1F2C2E; font-size: 15px; }
+#secondary-view li.private-message b.name { font-weight: bold;  color: #ECD078; }
 
 .signin-view {
   width: 400px;
