@@ -6,7 +6,12 @@ html,body { margin: 0; padding: 0; }
 body {
   background: url(/img/02433_archinthesky_1920x1200.jpg);
   background-size: auto 100%;
-  margin: 0; padding: 0; font-family: Helvetica; line-height: 1.5em; color: #FFF;
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica;
+  line-height: 1.5em;
+  color: #FFF;
+  overflow: hidden;
 }
 
 body a { color: #ECD078;}
@@ -16,9 +21,6 @@ body a { color: #ECD078;}
   box-shadow: 1px 1px 20px rgba(0,0,0,0.9);
   border: 1px solid rgba(0,0,0,0.9);
   overflow: hidden;
-  height: 800px;
-  width: 95%;
-  margin: 0 auto;
 }
 #app.transparent { background: transparent; border: none; box-shadow: none;}
 
@@ -109,7 +111,7 @@ body a { color: #ECD078;}
 .chat-view .input-pane input:focus { outline: 0 none; }
 
 
-#secondary-view { font-size: 13px; height: 300px; width: 100%; overflow-y: scroll; }
+#secondary-view { font-size: 13px; width: 100%; overflow-y: scroll; }
 #secondary-view ul { padding: 0; list-style: none; overflow: hidden; }
 #secondary-view b.meta { display: table-cell; width: 180px; text-align: right; padding-right: 10px; border-right: 1px solid #333; }
 #secondary-view b.msg { display: table-cell; font-weight: normal; padding-left: 10px;}

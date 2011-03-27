@@ -35,9 +35,15 @@ $(function() {
       var self = this;
 
       var dom = $("#app");
-      dom.css("position", "relative")
-         .css("top", (($(window).height() - dom.height())/2) +"px")
-         .addClass("transparent");
+
+      $("#app").addClass("transparent");
+      $(window).resize(function() {
+        $("#app").css("position", "absolute")
+           .width($(window).width())
+           .height($(window).height())
+      });
+
+      $(window).trigger("resize");
 
       this.client.bind("connect-not-ok", function() {
         console.log("[App] connect-not-ok Presenting Signin Form");
@@ -53,32 +59,6 @@ $(function() {
       this.client.bind("disconnect", function() {
         console.log("[App] Disconnected, Presenting Signin Form");
         self.signin();
-      });
-
-      this.client.bind("groupchat", function(message) {
-        self.displayNotification(message);
-        self.audioNotification(message);
-      });
-
-      var tpl = $(_.template("#chat-view-template")());
-      $("#app").html(tpl.html());
-
-      this.secondaryView = new Chachara.SecondaryView({el: $("#secondary-view")[0] });
-      this.secondaryView.render();
-
-      this.client.bind("groupchat", function(message) {
-        message.processedBody = self.messageHandler.processBody(message);                  
-        self.secondaryView.displayMessage(message);
-      });
-
-      this.client.bind("chat", function(message) {
-        console.log("[Private Message Received]");
-				self.secondaryView.displayPrivateMessage(message);
-
-				_(self.chatViews).each(function(view, key) {
-					console.log(view);
-					view.displayPrivateMessage(message);
-				});
       });
 
     },
@@ -119,10 +99,35 @@ $(function() {
 
     chat: function(chatData) {
       var self = this;
-      var tpl = _.template("#chat-view-template");
+      var tpl = $(_.template("#chat-view-template")());
 
-      $("#app").html($(tpl()).html());
+      $("#app").html(tpl.html());
       $("#app").removeClass("transparent");
+
+      this.secondaryView = new Chachara.SecondaryView({el: $("#app #secondary-view")[0] });
+      this.secondaryView.render();
+
+      this.client.bind("groupchat", function(message) {
+        self.displayNotification(message);
+        self.audioNotification(message);
+      });
+
+
+      this.client.bind("groupchat", function(message) {
+        message.processedBody = self.messageHandler.processBody(message);                  
+        self.secondaryView.displayMessage(message);
+      });
+
+      this.client.bind("chat", function(message) {
+        console.log("[Private Message Received]");
+        self.secondaryView.displayPrivateMessage(message);
+
+        _(self.chatViews).each(function(view, key) {
+          console.log(view);
+          view.displayPrivateMessage(message);
+        });
+      });
+
 
       self.rooms.bind("add", function(room) {
         self.createRoomView(room);
