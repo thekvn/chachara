@@ -20,7 +20,8 @@ var Chachara = {
       ],
       bodyHandlers : [
         new Chachara.Sanitizer("Body Sanitizer"),
-        new Chachara.UrlLinker('URL Linker - Replaces URLs with links')
+        new Chachara.UrlLinker('URL Linker - Replaces URLs with links'),
+        new Chachara.ActionMessage('Handles /me messages')        
       ]      
     });
 

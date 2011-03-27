@@ -92,7 +92,7 @@ Chachara.FlickrHandler = function(name) {
 }
 
 // Do more than fixing newlines .html() trick?
-Chachara.Sanitizer = function(message) {
+Chachara.Sanitizer = function(name) {
   this.name = name;
   this.updateBody = function(body) {  
     body = $("<div/>").text(body).html();
@@ -106,4 +106,15 @@ Chachara.UrlLinker = function(name) {
     var urlexp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
     return body.replace(urlexp, "<a href='$1' target='_blank'>$1</a>");
   }
+}
+
+Chachara.ActionMessage = function(name) {
+  this.name = name;
+  this.updateBody = function(body) {
+    if (matches = body.match(/\/me\s(.*)/)) {
+      return matches[1];
+    } else {
+      return body;
+    }
+  }  
 }
