@@ -115,6 +115,20 @@ Client.prototype.connect = function(jid, password, callback) {
   }
 
 
+  Client.prototype.say = function(what, to, callback) {
+    // Send a message.
+    var elem = new xmpp.Element('message', {
+      from : this.jid,
+      to   : to,
+      type : 'chat'
+    });
+
+    elem.c('body').t(what);
+    this.connection.send(elem);
+    callback();
+  }
+  
+
   Client.prototype.disconnect = function() {
     if (this.connection) {
       this.connection.send(new xmpp.Element('presence', {type: 'unavailable'})

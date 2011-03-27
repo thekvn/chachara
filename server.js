@@ -125,9 +125,15 @@ var events = {
   },
 
   onMessage: function(xmppClient, message, callback){
-    xmppClient.rooms[message.room].say(message.body, function() {
-      callback({type:"message-ok"});
-    });
+    if (message.type == "chat") {
+      xmppClient.say(message.body, message.to, function() {
+        callback({type:"message-ok"});
+      });
+    } else {
+      xmppClient.rooms[message.room].say(message.body, function() {
+        callback({type:"message-ok"});
+      });      
+    }
   },
 
   onSetStatus: function(xmppClient, message){
@@ -186,7 +192,8 @@ socket.on('connection', function(client) {
     case 'join-room':
       events.onJoinRom(xmppClient, message, sendMessage);
       break;
-    case 'message':
+    case 'chat':
+    case 'groupchat':
       events.onMessage(xmppClient, message, sendMessage);
       break;
     case 'set-status':

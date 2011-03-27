@@ -201,10 +201,29 @@ $(function() {
           $(this.node).find(".chatinput").val("");
           return true;
         }
+        
+        // Match @nick message
+        // TODO Support full names as nicks
+        else if (matches = str.match(/^@(\w+)\s(.*)$/)) {
+          var to = matches[1];
+          var toJid = [to, this.app.jid.split("@")[1]].join("@");
+
+          if (this.room.participants.get(to) != undefined) {
+            var data = {
+              type: "chat",
+              body: matches[2],
+              to  : toJid
+            };
+            this.trigger("input", data);            
+          }
+
+          $(this.node).find(".chatinput").val("");
+          return true;
+        }        
 
         if (str.length > 0) {
           var data = {
-            type: "message",
+            type: "groupchat",
             body: str,
             room: this.room.id
           };

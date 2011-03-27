@@ -51,7 +51,8 @@ $(function() {
       });
 
       this.client.bind("connect-ok", function(connectData) {
-        self.nick = window.localStorage.getItem("jid").split("@")[0];
+        self.jid = window.localStorage.getItem("jid");
+        self.nick = self.jid.split("@")[0];
         self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
         self.chat(connectData);
       });
@@ -89,6 +90,7 @@ $(function() {
           console.log("[App] Authentication Successful");
           console.log("[App] Initiating Chat");
           self.signinView.dismiss();
+          self.jid = self.authData.jid;          
           self.nick = self.authData.jid.split("@")[0];
           self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
           self.authData["do-join"] = true;

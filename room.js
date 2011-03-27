@@ -43,8 +43,9 @@ Room.prototype.showPresence = function(to) {
 Room.prototype.say = function $say$(what, callback) {
   // Send a message.
   var elem = new xmpp.Element('message', {
-    from: this.client.jid,
-    to: this.name, type: 'groupchat'
+    from : this.client.jid,
+    to   : this.name,
+    type : 'groupchat'
   });
 
   elem.c('body').t(what);
