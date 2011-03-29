@@ -22,12 +22,12 @@ $(function() {
 
       this.messageSound = {
         source  : new Audio("/audio/message.mp3"),
-        enabled : window.localStorage.getItem("audio-on-message") || "true"
+        enabled : "false"
       };
 
       this.mentionSound = {
         source  : new Audio("/audio/mention.mp3"),
-        enabled : window.localStorage.getItem("audio-on-mention") || "true"
+        enabled : "false"
       };
     },
 
@@ -54,6 +54,7 @@ $(function() {
         self.jid = window.localStorage.getItem("jid");
         self.nick = self.jid.split("@")[0];
         self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
+        self.resetMentionsTimeout();
         self.chat(connectData);
       });
 
@@ -93,6 +94,7 @@ $(function() {
           self.jid = self.authData.jid;          
           self.nick = self.authData.jid.split("@")[0];
           self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
+          self.resetMentionsTimeout();          
           self.authData["do-join"] = true;
           self.chat(self.authData);
         });
@@ -110,13 +112,16 @@ $(function() {
       this.secondaryView.render();
 
       this.client.bind("groupchat", function(message) {
-        self.displayNotification(message);
         self.audioNotification(message);
+        // Chrome notifications block html5 audio
+        setTimeout(function(){
+          self.displayNotification(message);
+        }, 10);
       });
 
 
       this.client.bind("groupchat", function(message) {
-        message.processedBody = self.messageHandler.processBody(message);                  
+        message.processedBody = self.messageHandler.processBody(message);
         self.secondaryView.displayMessage(message);
       });
 
@@ -278,12 +283,12 @@ $(function() {
 
     displayNotification: function(message) {
       if (window.webkitNotifications.checkPermission() == 0) {
-        if (message.body.match(this.mentionMatcher) != undefined && message.from.indexOf(this.nick) == -1){
+        if (message.body.match(this.mentionMatcher) != undefined && message.from.indexOf(this.nick) == -1 && this.mentionSound.enabled == "true"){
           var n = window.webkitNotifications.createNotification('', message.from, message.body);
           n.show();
           setTimeout(function() {
             n.cancel();
-          }, 5000);
+          }, 3000);
         }
       }
     },
@@ -296,6 +301,14 @@ $(function() {
       } else if (mentioned && this.mentionSound.enabled == "true") {
         this.mentionSound.source.play();
       }
+    },
+    
+    resetMentionsTimeout: function() {
+      var self = this;
+      setTimeout(function(){
+        self.messageSound.enabled = window.localStorage.getItem("audio-on-message") || "true";
+        self.mentionSound.enabled = window.localStorage.getItem("audio-on-mention") || "true";
+      }, 1000);
     }
   });
 });
