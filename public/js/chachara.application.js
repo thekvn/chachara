@@ -16,9 +16,9 @@ $(function() {
       this.rooms        = new Chachara.Rooms();
       this.participants = new Chachara.Participants();
 
-      this.useNotifications = false;
+      this.useNotifications = "false";
       this.nick = null;
-      this.mentionMatcher = null;
+      this.mentionMatchers = [];
 
       this.messageSound = {
         source  : new Audio("/audio/message.mp3"),
@@ -52,9 +52,7 @@ $(function() {
 
       this.client.bind("connect-ok", function(connectData) {
         self.jid = window.localStorage.getItem("jid");
-        self.nick = self.jid.split("@")[0];
-        self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
-        self.resetMentionsTimeout();
+        self.restoreState();
         self.chat(connectData);
       });
 
@@ -63,6 +61,24 @@ $(function() {
         self.signin();
       });
 
+    },
+
+    restoreState: function(){
+      var self = this;
+      this.nick = this.jid.split("@")[0];
+      var mentions = [];
+
+      if (window.localStorage.getItem("mentions") == undefined) {
+        window.localStorage.setItem("mentions", this.nick);
+        mentions.push(this.nick);
+      } else {
+        mentions = window.localStorage.getItem("mentions").split(",");
+      }
+      _.each(mentions, function(mention){
+        self.mentionMatchers.push(new RegExp("\\b" + mention + "\\b", "i"));
+      });
+
+      this.resetMentionsTimeout();
     },
 
     signin: function() {
@@ -91,10 +107,8 @@ $(function() {
           console.log("[App] Authentication Successful");
           console.log("[App] Initiating Chat");
           self.signinView.dismiss();
-          self.jid = self.authData.jid;          
-          self.nick = self.authData.jid.split("@")[0];
-          self.mentionMatcher = new RegExp("\\b" + self.nick + "\\b", "i");
-          self.resetMentionsTimeout();          
+          self.jid = self.authData.jid;
+          self.restoreState();
           self.authData["do-join"] = true;
           self.chat(self.authData);
         });
@@ -277,13 +291,35 @@ $(function() {
     enableNotifications: function(){
       var self = this;
 
-      function permissionGranted(){ self.useNotifications = true; }
+      function permissionGranted(){
+        self.useNotifications = "true";
+        if (window.localStorage) {
+          window.localStorage.setItem("useNotifications", "true");
+        }
+      }
       window.webkitNotifications.requestPermission(permissionGranted);
+    },
+
+
+    // Simple word matching, case insensitve
+    getMentions: function(body) {
+      var mentions = [];
+
+      _.each(this.mentionMatchers, function(mention){
+        var matches = body.match(mention);
+        if (matches) {
+          mentions.push(matches[0]);
+        }
+      });
+
+      return mentions;
     },
 
     displayNotification: function(message) {
       if (window.webkitNotifications.checkPermission() == 0) {
-        if (message.body.match(this.mentionMatcher) != undefined && message.from.indexOf(this.nick) == -1 && this.mentionSound.enabled == "true"){
+        var mentioned = (this.getMentions(message.body).length > 0);
+
+        if (mentioned && message.from.indexOf(this.nick) == -1 && this.useNotifications == "true"){
           var n = window.webkitNotifications.createNotification('', message.from, message.body);
           n.show();
           setTimeout(function() {
@@ -294,12 +330,17 @@ $(function() {
     },
 
     audioNotification: function(message){
-      var mentioned = (message.body.match(this.mentionMatcher) != undefined);
+      var mentioned = (this.getMentions(message.body).length > 0);
 
       if (!mentioned && this.messageSound.enabled == "true") {
         this.messageSound.source.play();
       } else if (mentioned && this.mentionSound.enabled == "true") {
-        this.mentionSound.source.play();
+        // If mentioned but itself, play regular sound
+        if (message.from.indexOf(this.nick) == -1) {
+          this.mentionSound.source.play();
+        } else {
+          this.messageSound.source.play();
+        }
       }
     },
     
@@ -308,6 +349,7 @@ $(function() {
       setTimeout(function(){
         self.messageSound.enabled = window.localStorage.getItem("audio-on-message") || "true";
         self.mentionSound.enabled = window.localStorage.getItem("audio-on-mention") || "true";
+        self.useNotifications     = window.localStorage.getItem("useNotifications") || "true";
       }, 1000);
     }
   });

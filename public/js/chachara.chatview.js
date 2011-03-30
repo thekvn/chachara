@@ -61,8 +61,12 @@ $(function() {
       var ul = $(this.node).find(".primary-pane ul");
 
       if (this.room.id === message.room) {
-        if (matches = body.match(this.app.mentionMatcher)) {
-          body = body.replace(matches[0], "<em>" + matches[0] + "</em>");
+        var mentions = this.app.getMentions(message.body);
+        if (mentions.length > 0) {
+          _.each(mentions, function(mention){
+            body = body.replace(mention, "<em>" + mention + "</em>");
+          });
+
           ul.append("<li class='mention'><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         } else {
           ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
@@ -220,6 +224,50 @@ $(function() {
           $(this.node).find(".chatinput").val("");
           return true;
         }        
+
+        // Adds another mention to mentionMatchers array, so the user
+        // can be notified on more things than just his nickname
+        else if (matches = str.match(/^\/mentions\sadd\s(\w+)$/)) {
+          var word = matches[1];
+          var mentions = window.localStorage.getItem("mentions").split(",");
+
+          mentions.push($.trim(word));
+          window.localStorage.setItem("mentions", mentions);
+          this.app.mentionMatchers.push(new RegExp("\\b" + $.trim(word) + "\\b", "i"));
+
+          $(this.node).find(".chatinput").val("");
+          return true;
+        }
+
+        else if (matches = str.match(/^\/settings$/)) {
+          var settings = [];
+          var mentions = window.localStorage.getItem("mentions").split(",");
+          var ul = $(this.node).find(".primary-pane ul");
+          var piece1 = "<li class='presence'><b class='meta'><span class='name'>";
+          var piece2 = "</span></b><b class='msg'>";
+          var piece3 = "</b></li>";
+
+          // Notifications
+          settings.push(["useNotifications", this.app.useNotifications]);
+          // Profile, nick will be allowed to be more than just a part of the JID
+          settings.push(["jid", this.app.jid]);
+          settings.push(["nick", this.app.nick]);
+          // Mentions
+          _.each(mentions, function(mention, index){
+            settings.push(["mentions[" + index + "]", mention]);
+          });
+          // Sounds
+          settings.push(["mentionSounds", this.app.mentionSound.enabled == "true" ? "enabled" : "disabled"]);
+          settings.push(["messageSounds", this.app.messageSound.enabled == "true" ? "enabled" : "disabled"]);
+
+          _.each(settings, function(setting){
+            ul.append([piece1, setting[0], piece2, setting[1], piece3].join(""));
+          });
+
+          $(this.node).find(".primary-pane").scrollTop(100000);
+          $(this.node).find(".chatinput").val("");
+          return true;
+        }
 
         if (str.length > 0) {
           var data = {
