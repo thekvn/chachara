@@ -24,12 +24,12 @@ body a { color: #ECD078;}
 }
 #app.transparent { background: transparent; border: none; box-shadow: none;}
 
-#chat-view-container { 
+#chat-view-container {
   overflow: hidden;
-  height: 494px; 
+  height: 494px;
 }
 
-.chat-view { 
+.chat-view {
   padding-right: 200px;
   font-size: 13px;
   overflow: hidden;
@@ -60,7 +60,7 @@ body a { color: #ECD078;}
   display: table-cell;
   line-height: 24px;
 }
-.chat-view ul li b.meta { 
+.chat-view ul li b.meta {
   width: 180px;
   text-align: right;
   padding-right: 10px;
@@ -69,10 +69,10 @@ body a { color: #ECD078;}
 }
 
 .chat-view ul li b.name {
-  color: #4ECDC4;
+  /* color: #4ECDC4; */
   text-align: right;
 }
-.chat-view ul li b.msg { 
+.chat-view ul li b.msg {
   padding-left: 10px;
   font-weight: normal;
 	padding-bottom: 3px;
@@ -88,7 +88,7 @@ body a { color: #ECD078;}
   height: 455px;
   padding-bottom: 5px;
 }
-.chat-view .primary-pane b.name { 
+.chat-view .primary-pane b.name {
   width: 140px;
 }
 

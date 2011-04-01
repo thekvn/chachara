@@ -61,15 +61,18 @@ $(function() {
       var ul = $(this.node).find(".primary-pane ul");
 
       if (this.room.id === message.room) {
+        var participant = this.app.participants.get(name);
+        var color = "style='color:" + participant.get("color") + "'";
+
         var mentions = this.app.getMentions(message.body);
         if (mentions.length > 0) {
           _.each(mentions, function(mention){
             body = body.replace(mention, "<em>" + mention + "</em>");
           });
 
-          ul.append("<li class='mention'><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+          ul.append("<li class='mention'><b class='meta'><b class='name' " + color + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         } else {
-          ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+          ul.append("<li><b class='meta'><b class='name' " + color + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         }
 
         if (message.html) {
@@ -205,7 +208,7 @@ $(function() {
           $(this.node).find(".chatinput").val("");
           return true;
         }
-        
+
         // Match @nick message
         // TODO Support full names as nicks
         else if (matches = str.match(/^@(\w+)\s(.*)$/)) {
@@ -218,12 +221,12 @@ $(function() {
               body: matches[2],
               to  : toJid
             };
-            this.trigger("input", data);            
+            this.trigger("input", data);
           }
 
           $(this.node).find(".chatinput").val("");
           return true;
-        }        
+        }
 
         // Adds another mention to mentionMatchers array, so the user
         // can be notified on more things than just his nickname

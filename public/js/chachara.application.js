@@ -65,8 +65,18 @@ $(function() {
 
     restoreState: function(){
       var self = this;
-      this.nick = this.jid.split("@")[0];
+      self.nick = self.jid.split("@")[0];
       var mentions = [];
+
+      // Add myself, should not render me in the sidebar
+      participant = new Chachara.Participant({
+         id: self.nick,
+         show: "chat",
+         status: "Chachara",
+         color: self.randomColor()
+      });
+
+      self.participants.add(participant);
 
       if (window.localStorage.getItem("mentions") == undefined) {
         window.localStorage.setItem("mentions", this.nick);
@@ -141,6 +151,7 @@ $(function() {
 
       this.client.bind("chat", function(message) {
         console.log("[Private Message Received]");
+        self.addParticipant(message.from.split("@")[0]);
         self.secondaryView.displayPrivateMessage(message);
 
         _(self.chatViews).each(function(view, key) {
@@ -233,11 +244,13 @@ $(function() {
       });
 
       this.client.bind("groupchat", function(message) {
+        self.addParticipant(message.from.split(/\//)[1]);
+
         if (message.room == room.id) {
           self.messageHandler.processEmbedded(message);
         }
-        
-        var body = self.messageHandler.processBody(message);                  
+
+        var body = self.messageHandler.processBody(message);
         newView.displayMessage(message, body);
       });
 
@@ -246,6 +259,7 @@ $(function() {
         var fromParts   = message.from.split(/\//);
         var thisRoom    = self.rooms.get(fromParts[0]);
         var participant = thisRoom.participants.get(fromParts[1]);
+        var color = self.addParticipant(fromParts[1]).get("color");
 
         // Per-room presence. Joined or exited
         if (message.show === "join-room" || message.show == "exit-room") {
@@ -255,12 +269,13 @@ $(function() {
             participant = new Chachara.Participant({
               id: fromParts[1],
               room: thisRoom,
-              show: message.show
+              show: message.show,
+              color: color
             });
 
             thisRoom.participants.add(participant);
           } else {
-            participant.set({show:message.show});
+            participant.set({ show: message.show });
           }
 
           newView.displayPresence(message);
@@ -274,7 +289,6 @@ $(function() {
             console.log("[XMPP] new status message: " + message.status);
           }
         }
-
       });
 
       this.chatViews[room.id] = newView;
@@ -286,6 +300,21 @@ $(function() {
       }
 
       newView.show();
+    },
+
+    addParticipant: function(nick) {
+      var participant = this.participants.get(nick);
+
+      if (participant === undefined) {
+        participant = new Chachara.Participant({
+          id: nick,
+          color: this.randomColor()
+        });
+
+        this.participants.add(participant);
+      }
+
+      return participant;
     },
 
     enableNotifications: function(){
@@ -343,7 +372,7 @@ $(function() {
         }
       }
     },
-    
+
     resetMentionsTimeout: function() {
       var self = this;
       setTimeout(function(){
@@ -351,6 +380,11 @@ $(function() {
         self.mentionSound.enabled = window.localStorage.getItem("audio-on-mention") || "true";
         self.useNotifications     = window.localStorage.getItem("useNotifications") || "true";
       }, 1000);
+    },
+
+    randomColor: function(){
+      return "#" + Math.round(0xffffff * Math.random()).toString(16);
     }
+
   });
 });

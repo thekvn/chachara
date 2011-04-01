@@ -8,8 +8,9 @@ $(function() {
     },
     render: function() {
       if (this.model.get("show") == "join-room") {
+        var color = "style='color:" + this.model.get("color") + "'";
         $(this.el).show();
-        $(this.el).html("<span class='name'>" + this.model.get('id') + "</span>");
+        $(this.el).html("<span class='name' " + color + ">" + this.model.get('id') + "</span>");
       } else {
         $(this.el).html("");
         $(this.el).hide();
