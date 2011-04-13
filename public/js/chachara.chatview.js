@@ -20,7 +20,8 @@ $(function() {
       $(this.el).append(template);
       this.participantsView.el = $(this.node).find(".participants-pane");
 
-      $(this.node).find("span.current").text("#"+this.room.shortname());
+      var roomType = (this.room.get("type") == "groupchat") ? "#" : "@";
+      $(this.node).find("span.current").text(roomType + this.room.shortname());
       $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
       $(this.node).find(".primary-pane ul").append("<li>Joined " + this.options.room.id + "</li>")
@@ -54,13 +55,20 @@ $(function() {
 
     displayMessage: function(message, body) {
       var fromParts = message.from.split("/");
-      var room = fromParts[0].split("@")[0];
-      var name = fromParts[1];
       var html = message.html;
+      var room, name;
+
+      if (message.type == "groupchat") {
+        room = fromParts[0];
+        name = fromParts[1];
+      } else if (message.type == "chat") {
+        room = message.id;
+        name = fromParts[0].split("@")[0];
+      }
 
       var ul = $(this.node).find(".primary-pane ul");
 
-      if (this.room.id === message.room) {
+      if (this.room.id === room) {
         var participant = this.app.participants.get(name);
         var color = "style='color:" + participant.get("color") + "'";
 
@@ -83,29 +91,24 @@ $(function() {
       }
     },
 
-		displayPrivateMessage: function(message) {
-			// We're experimenting with not having this in the chatview for now. I found it awkward
-
-			/*
-      var fromParts = message.from.split("@");
-			var name = fromParts[0]
-			var body = message.body;
-
-      $(this.node)
-        .find(".primary-pane ul")
-        .append("<li class='private-message'><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'> " + body + "</b></li>");
-        $(this.node).scrollTop(100000);
-			*/
-		},
-
     displayEmbedly: function(message) {
       var fromParts = message.from.split("/");
-      var room = fromParts[0].split("@")[0];
-      var name = fromParts[1];
       var html = message.html;
+      var room, name;
 
-      if (this.room.id === message.room) {
-        $(this.node).find(".primary-pane ul").append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg embed'>" + html + "</b></li>");
+      if (message.type == "groupchat") {
+        room = fromParts[0];
+        name = fromParts[1];
+      } else if (message.type == "chat") {
+        room = message.id;
+        name = fromParts[0].split("@")[0];
+      }
+
+      if (this.room.id === room) {
+        var participant = this.app.participants.get(name);
+        var color = "style='color:" + participant.get("color") + "'";
+
+        $(this.node).find(".primary-pane ul").append("<li><b class='meta'><b class='name' " + color + ">" + name + "</b></b><b class='msg embed'>" + html + "</b></li>");
         $(this.node).find(".primary-pane").scrollTop(10000);
       }
     },
@@ -215,13 +218,27 @@ $(function() {
           var to = matches[1];
           var toJid = [to, this.app.jid.split("@")[1]].join("@");
 
-          if (this.room.participants.get(to) != undefined) {
+          if (this.app.participants.get(to) != undefined) {
             var data = {
               type: "chat",
               body: matches[2],
-              to  : toJid
+              to  : toJid,
+              from: this.app.jid,
+              id  : toJid
             };
+
+            var room = this.app.rooms.get(toJid);
+
+            if (room == undefined) {
+              this.app.rooms.add(new Chachara.Room({ id: toJid, type: "chat" }));
+            } else {
+              console.log("Already Created Chat")
+            }
+
             this.trigger("input", data);
+            this.app.messageHandler.processEmbedded(data);
+            var body = this.app.messageHandler.processBody(data);
+            this.displayMessage(data, body);
           }
 
           $(this.node).find(".chatinput").val("");
@@ -273,12 +290,30 @@ $(function() {
         }
 
         if (str.length > 0) {
-          var data = {
-            type: "groupchat",
-            body: str,
-            room: this.room.id
-          };
-          this.trigger("input", data);
+          var data;
+          if (this.room.get("type") == "groupchat") {
+            data = {
+              type: "groupchat",
+              body: str,
+              room: this.room.id
+            };
+            this.trigger("input", data);
+
+          } else {
+            data = {
+              type: "chat",
+              body: str,
+              to  : this.room.id,
+              from: this.app.jid,
+              id  : this.room.id
+            };
+
+            this.trigger("input", data);
+            this.app.messageHandler.processEmbedded(data);
+            var body = this.app.messageHandler.processBody(data);
+            this.displayMessage(data, body);
+          }
+
           $(this.node).find(".chatinput").val("");
         }
       }

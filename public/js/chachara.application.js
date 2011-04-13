@@ -126,6 +126,7 @@ $(function() {
     },
 
     chat: function(chatData) {
+      console.log(chatData);
       var self = this;
       var tpl = $(_.template("#chat-view-template")());
 
@@ -143,6 +144,13 @@ $(function() {
         }, 10);
       });
 
+      this.client.bind("chat", function(message) {
+        self.audioNotification(message);
+        // Chrome notifications block html5 audio
+        setTimeout(function(){
+          self.displayNotification(message);
+        }, 10);
+      });
 
       this.client.bind("groupchat", function(message) {
         message.processedBody = self.messageHandler.processBody(message);
@@ -154,19 +162,20 @@ $(function() {
         self.addParticipant(message.from.split("@")[0]);
         self.secondaryView.displayPrivateMessage(message);
 
-        _(self.chatViews).each(function(view, key) {
-          console.log(view);
-          view.displayPrivateMessage(message);
-        });
+        var room = self.rooms.get(message.from.split("/")[0]);
+        if (room == undefined) {
+          self.rooms.add(new Chachara.Room({ id: message.from.split("/")[0], type: "chat" }));
+        } else {
+          console.log("Already Created Chat")
+        }
       });
 
-
       self.rooms.bind("add", function(room) {
-        self.createRoomView(room);
+        var view = self.createRoomView(room);
       });
 
       this.client.bind("join-room-ok", function(data) {
-        self.rooms.add(new Chachara.Room({id: data.room}));
+        self.rooms.add(new Chachara.Room({ id: data.room, type: "groupchat" }));
       });
 
       if (chatData.rooms) {
@@ -174,8 +183,14 @@ $(function() {
           if (chatData["do-join"]) {
             self.client.join(room);
           } else {
-            self.rooms.add(new Chachara.Room({id: room}));
+            self.rooms.add(new Chachara.Room({ id: room, type: "groupchat" }));
           }
+        });
+      }
+
+      if (chatData.chats) {
+        _(chatData.chats).each(function(jid) {
+          self.rooms.add(new Chachara.Room({ id: jid, type: "chat" }));
         });
       }
     },
@@ -233,7 +248,16 @@ $(function() {
       });
 
       this.messageHandler.bind("embedded", function(message){
-        if (message.room == room.id) {
+        var fromParts = message.from.split("/");
+        var fromRoom;
+
+        if (message.type == "groupchat") {
+          fromRoom = fromParts[0];
+        } else if (message.type == "chat") {
+          fromRoom = message.id;
+        }
+
+        if (fromRoom == room.id) {
           newView.displayEmbedly(message);
         }
       });
@@ -251,6 +275,16 @@ $(function() {
         }
 
         var body = self.messageHandler.processBody(message);
+        newView.displayMessage(message, body);
+      });
+
+      this.client.bind("chat", function(message) {
+        if (message.from.split("/")[0] == room.id) {
+          self.messageHandler.processEmbedded(message);
+        }
+
+        var body = self.messageHandler.processBody(message);
+        message.id = message.from.split("/")[0];
         newView.displayMessage(message, body);
       });
 
@@ -300,6 +334,7 @@ $(function() {
       }
 
       newView.show();
+      return newView;
     },
 
     addParticipant: function(nick) {
@@ -383,7 +418,14 @@ $(function() {
     },
 
     randomColor: function(){
-      return "#" + Math.round(0xffffff * Math.random()).toString(16);
+      colors = [
+        "#0000FF", "#0066FF", "#0099FF", "#00CCFF", "#00FFFF", "#00FF00",
+        "#00FF33", "#00FF66", "#00FF99", "#00FFCC", "#FFFF00", "#FFFF33",
+        "#FF6600", "#FF6633", "#FF6666", "#FF0000", "#FF0099", "#FF00FF",
+        "#CC99FF", "#CC00FF", "#9900FF", "#990099", "#6600FF", "#FFFFFF"
+      ]
+
+      return colors[Math.round(Math.random() * colors.length)];
     }
 
   });

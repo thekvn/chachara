@@ -69,7 +69,8 @@ var events = {
 
       callback({
         type  : "connect-ok",
-        rooms : rooms
+        rooms : rooms,
+        chats : xmppClient.chats
       });
 
       Object.keys(xmppClient.rooms).forEach(function(roomName) {
@@ -102,11 +103,6 @@ var events = {
     xmppClient.join(message.room, function(room, websocket) {
       websocket.send({ type: "join-room-ok", room: room.name });
 
-      // Main reason for the workaround in renewing the websocket and making
-      // it a property of the xmpp client instance is because I yet haven't
-      // figured out how to have access to the client inside these event
-      // handlers definition 'dynamic' so it always has access to the latest
-      // client that is given on socket.onConnection
       room.on("message", function(websocket, msg) {
         msg.room = room.name;
         room.buffer.push(msg);
@@ -132,7 +128,7 @@ var events = {
     } else {
       xmppClient.rooms[message.room].say(message.body, function() {
         callback({type:"message-ok"});
-      });      
+      });
     }
   },
 
