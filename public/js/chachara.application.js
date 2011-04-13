@@ -160,13 +160,21 @@ $(function() {
       this.client.bind("chat", function(message) {
         console.log("[Private Message Received]");
         self.addParticipant(message.from.split("@")[0]);
-        self.secondaryView.displayPrivateMessage(message);
 
-        var room = self.rooms.get(message.from.split("/")[0]);
-        if (room == undefined) {
-          self.rooms.add(new Chachara.Room({ id: message.from.split("/")[0], type: "chat" }));
-        } else {
-          console.log("Already Created Chat")
+        if (self.jid != message.from.split("/")[0]) {
+          var room = self.rooms.get(message.from.split("/")[0]);
+
+          if (room == undefined) {
+            self.rooms.add(new Chachara.Room({ id: message.from.split("/")[0], type: "chat" }));
+            setTimeout(function(){
+              console.log("inside timeout");
+              self.client.trigger("chat", message);
+            }, 100);
+
+          } else {
+            self.secondaryView.displayPrivateMessage(message);
+            console.log("Already Created Chat")
+          }
         }
       });
 
@@ -279,12 +287,15 @@ $(function() {
       });
 
       this.client.bind("chat", function(message) {
+        if (message.id == undefined) {
+          message.id = message.from.split("/")[0];
+        }
+
         if (message.from.split("/")[0] == room.id) {
           self.messageHandler.processEmbedded(message);
         }
 
         var body = self.messageHandler.processBody(message);
-        message.id = message.from.split("/")[0];
         newView.displayMessage(message, body);
       });
 

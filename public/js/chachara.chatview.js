@@ -230,15 +230,19 @@ $(function() {
             var room = this.app.rooms.get(toJid);
 
             if (room == undefined) {
+
               this.app.rooms.add(new Chachara.Room({ id: toJid, type: "chat" }));
+              var client = this.app.client;
+              setTimeout(function(){
+                console.log("inside timeout");
+                client.trigger("chat", data);
+              }, 100);
+
             } else {
               console.log("Already Created Chat")
             }
 
             this.trigger("input", data);
-            this.app.messageHandler.processEmbedded(data);
-            var body = this.app.messageHandler.processBody(data);
-            this.displayMessage(data, body);
           }
 
           $(this.node).find(".chatinput").val("");
@@ -309,9 +313,7 @@ $(function() {
             };
 
             this.trigger("input", data);
-            this.app.messageHandler.processEmbedded(data);
-            var body = this.app.messageHandler.processBody(data);
-            this.displayMessage(data, body);
+            this.app.client.trigger("chat", data);
           }
 
           $(this.node).find(".chatinput").val("");
