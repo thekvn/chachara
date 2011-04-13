@@ -42,6 +42,7 @@ Client.prototype.connect = function(jid, password, callback) {
   });
 
   self.rooms = {};
+  self.chats = [];
 
   self.connection.on('online', onOnline);
 
@@ -125,9 +126,14 @@ Client.prototype.connect = function(jid, password, callback) {
 
     elem.c('body').t(what);
     this.connection.send(elem);
+
+    if (this.chats.indexOf(to) == -1) {
+      this.chats.push(to);
+    }
+
     callback();
   }
-  
+
 
   Client.prototype.disconnect = function() {
     if (this.connection) {
@@ -180,7 +186,7 @@ Client.prototype.connect = function(jid, password, callback) {
         to   : stanza.attrs.to,
         from : stanza.attrs.from,
         body : stanza.getChild("body").getText()
-      }); 
+      });
     }
   }
 };
