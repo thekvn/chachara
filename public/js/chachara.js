@@ -3,6 +3,7 @@ var Chachara = {
     var client = new Chachara.Client({
       host: window.location.host.split(":")[0],
       port: window.location.port,
+      secure: window.location.protocol == "https:",
       useNotifications: false,
       sid: "chachara.sid"
     });
