@@ -1,8 +1,7 @@
 var Chachara = {
   run: function() {
     var client = new Chachara.Client({
-      host: 'https://chachara.no.de',
-      //host: window.location.hostname,
+      host: window.location.host.split(":")[0],
       port: window.location.port,
       useNotifications: false,
       sid: "chachara.sid"
