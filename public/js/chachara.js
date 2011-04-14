@@ -2,7 +2,7 @@ var Chachara = {
   run: function() {
     var client = new Chachara.Client({
       host: window.location.hostname,
-      port: window.location.port,
+      port: 8080,
       useNotifications: false,
       sid: "chachara.sid"
     });
@@ -16,13 +16,13 @@ var Chachara = {
         new Chachara.XkcdHandler('XKCD'),
         new Chachara.ImgurHandler("imgur.com"),
         new Chachara.SkitchHandler("skitch"),
-        new Chachara.FlickrHandler("flickr")        
+        new Chachara.FlickrHandler("flickr")
       ],
       bodyHandlers : [
         new Chachara.Sanitizer("Body Sanitizer"),
         new Chachara.UrlLinker('URL Linker - Replaces URLs with links'),
-        new Chachara.ActionMessage('Handles /me messages')        
-      ]      
+        new Chachara.ActionMessage('Handles /me messages')
+      ]
     });
 
     window.chachara = new Chachara.Application({
