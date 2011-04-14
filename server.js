@@ -33,11 +33,7 @@ app.get("/", function(req, res) {
   res.render("index.ejs");
 });
 
-if (os.hostname().match(/\w\.no\.de$/)) {
-  app.listen(80);
-} else {
-  app.listen(8080);
-}
+app.listen(8080);
 
 var socket = io.listen(app),
     connections = {};
