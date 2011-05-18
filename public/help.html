@@ -1,0 +1,81 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <title>Ch&aacute;chara</title>
+    <link rel="stylesheet" type="text/css" href="/css/app.css" />
+  </head>
+  <body id="help">
+    <h1>Ch&aacute;chara Documentation</h1>
+
+    <p>The application text input accepts the following commands</p>
+
+    <h2 class="command">/help</h2>
+    <p class="description">Shows this document</p>
+
+    <h2 class="command">/settings</h2>
+    <p class="description">Prints all configured settings for the user. Example:</p>
+    <pre>
+      useNotifications	true
+      jid	        jd@jabber.com
+      nick	        john.doe
+      mentions[0]	john
+      mentions[1]	node
+      mentionSounds	enabled
+      messageSounds     disabled
+    </pre>
+
+    <h2 class="command">ctrl + &lt;<br/>ctrl + &gt;</h2>
+    <p class="description">Not actually a input text command but a keystroke.
+      It changes the active chat pane. Each chat pane can contain a chatroom window
+      or a private message window</p>
+
+    <h2 class="command">/join room@server.com</h2>
+    <p class="description">Joins a room. The room name must include the full jabber
+      room address, i.e. chat@conference.jabber.com</p>
+
+    <h2 class="command">#room message</h2>
+    <p class="description">Sends a message to a room (chat pane) that is not
+      currently active. In this case the room string only needs to be what
+      comes before the @ character, i.e. for chat@conference.jabber.com the
+      room name would be just <b>chat</b>. Example:</p>
+    <pre>
+      #staff hello
+      #hr you're all fired
+    </pre>
+
+    <h2 class="command">/status type message</h2>
+    <p class="description">Sets a new xmpp status for the user. Three status types
+      are supported: <b>chat (available), xa (extended away) and dnd (do not disturb)</b>. The
+     third message parameter is optional. Example:</p>
+    <pre>
+      /status chat office
+      /status xa
+      /status dnd call
+    </pre>
+
+    <h2 class="command">/audio (mentions | messages | all) (on | off)</h2>
+    <p class="description">Changes the audio settings for the user. These settings will
+      persist in the browser's localStorage database. Audio for mentions uses a different
+     sound clip to regular messages. Example:</p>
+    <pre>
+      /audio messages off
+      /audio all on
+    </pre>
+
+    <h2 class="command">@nick message</h2>
+    <p class="description">Sends a private message to a user. nick is the string before the '@'
+      in the recipient's jid, i.e. for user@jabber.com nick would be <b>user</b>. Example:</p>
+    <pre>
+      @john hello
+      @joan lunch time!
+    </pre>
+
+    <h2 class="command">/mentions add word</h2>
+    <p class="description">Adds a custom mention notification for the user. By default, the
+      user will only get notified when his name is mentioned. This action allows the user
+      to add more words to trigger a mention notification. Example:</p>
+    <pre>
+      /mentions add lunch # the user gets notified every time the word 'lunch' appears
+    </pre>
+  </body>
+</html>

@@ -155,3 +155,21 @@ body a { color: #ECD078;}
   padding: 5px 8px;
   color: #FFF;
  }
+
+#help {
+  overflow: auto;
+  margin: 30px;
+  background: white;
+  color: #555;
+}
+
+#help .command {
+  padding: 10px;
+  background: #eee;
+  margin-top: 40px;
+}
+
+#help .description {
+  font-style: italic;
+  margin-left: 20px;
+}

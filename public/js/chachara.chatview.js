@@ -153,6 +153,13 @@ $(function() {
           }
         }
 
+        // Match /help
+        else if (matches = str.match(/^\/help$/)) {
+          $(this.node).find(".chatinput").val("");
+          window.open('/help.html');
+          return true;
+        }
+
         // Match #room
         else if (matches = str.match(/^#([a-z0-9]+)\s(.*)$/)) {
           var want = matches[1];
@@ -214,7 +221,6 @@ $(function() {
         }
 
         // Match @nick message
-        // TODO Support full names as nicks
         else if (matches = str.match(/^@(\w+)\s(.*)$/)) {
           var to = matches[1];
           var toJid = [to, this.app.jid.split("@")[1]].join("@");
