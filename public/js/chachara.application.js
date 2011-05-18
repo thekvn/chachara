@@ -302,17 +302,18 @@ $(function() {
       this.client.bind("presence", function(message) {
 
         var fromParts   = message.from.split(/\//);
+        var nick        = message.nick;
         var thisRoom    = self.rooms.get(fromParts[0]);
-        var participant = thisRoom.participants.get(fromParts[1]);
-        var color = self.addParticipant(fromParts[1]).get("color");
+        var participant = thisRoom.participants.get(nick);
+        var color = self.addParticipant(nick).get("color");
 
         // Per-room presence. Joined or exited
         if (message.show === "join-room" || message.show == "exit-room") {
-          console.log("[XMPP] " + fromParts[1] + " " + message.show);
+          console.log("[XMPP] " + nick + " " + message.show);
 
           if (participant === undefined) {
             participant = new Chachara.Participant({
-              id: fromParts[1],
+              id: nick,
               room: thisRoom,
               show: message.show,
               color: color
@@ -328,9 +329,9 @@ $(function() {
         // Global presence update, i.e. status updates
         } else {
           if (message.show == "offline") {
-            console.log("[XMPP] " + fromParts[1] + " went offline");
+            console.log("[XMPP] " + nick + " went offline");
           } else {
-            console.log("[XMPP] " + fromParts[1] + " changed status to " + message.show);
+            console.log("[XMPP] " + nick + " changed status to " + message.show);
             console.log("[XMPP] new status message: " + message.status);
           }
         }

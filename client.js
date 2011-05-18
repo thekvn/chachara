@@ -87,21 +87,23 @@ Client.prototype.connect = function(jid, password, callback) {
 
     } else if (stanza.name == "presence") {
 
-      if (stanza.getChild('x') !== undefined && stanza.getChild('x').getChild('photo') !== undefined) {
-        self.onAvatarAvailable(stanza);
-      } else {
+      //if (stanza.getChild('x') !== undefined && stanza.getChild('x').getChild('photo') !== undefined) {
+      //  self.onAvatarAvailable(stanza);
+      //} else {
+
         var fromParts = stanza.attrs.from.split('/');
         var room = fromParts[0];
-        var nick = fromParts[1];
 
         if (self.rooms[room]) {
           self.rooms[room]['onPresence'] && self.rooms[room].onPresence(stanza);
         }
-      }
+      //}
 
     } else if (stanza.name == "iq") {
       if (stanza.attrs.id == "v3") {
         self.onAvatar(stanza);
+      } else {
+
       }
     }
   }
@@ -143,7 +145,6 @@ Client.prototype.connect = function(jid, password, callback) {
       this.connection.end();
     }
   }
-
 
   self.connection.on("error", function(err) {
     console.log(util.inspect(err));

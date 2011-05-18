@@ -46,11 +46,17 @@ body a { color: #ECD078;}
   padding: 0;
   display: block;
 }
+
 .chat-view ul li {
   margin: 0;
   list-style: none;
   overflow: hidden;
   vertical-align: top;
+}
+
+.chat-view ul li.joined {
+  margin-top: 5px;
+  margin-left: 10px;
 }
 
 .chat-view ul li.presence { font-style: italic; color: #555; }

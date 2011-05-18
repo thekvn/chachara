@@ -90,10 +90,19 @@ Room.prototype.onPresence = function(stanza) {
 
   }
 
+  var nick;
+
+  if (stanza.getChild('x') !== undefined && stanza.getChild('x', 'http://jabber.org/protocol/muc#user').getChild('item') !== undefined) {
+    nick = stanza.getChild('x', 'http://jabber.org/protocol/muc#user').getChild('item').attrs.jid.split('@')[0];
+  } else {
+    nick = stanza.attrs.from.split('/')[1];
+  }
+
   this.emit("presence", this.client.websocket, {
     type   : "presence",
     to     : stanza.attrs.to,
     from   : stanza.attrs.from,
+    nick   : nick,
     status : status,
     show   : show
   });

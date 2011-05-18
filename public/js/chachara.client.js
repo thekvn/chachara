@@ -10,7 +10,7 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     this.options = options;
     this.sessionCookie = null;
 
-    this.socket = new io.Socket(options.host, { port: options.port});
+    this.socket = new io.Socket(options.host, { secure: options.secure, port: options.port});
     this.bindEvents();
     this.socket.connect();
   },

@@ -1,8 +1,9 @@
 var express = require("express"),
-    os   = require("os"),
-    io   = require("socket.io"),
+    os      = require("os"),
+    io      = require("socket.io"),
     connect = require('connect'),
-    util = require("util");
+    util    = require("util"),
+    fs      = require("fs");
 
 var Client = require("./client.js");
 
@@ -14,7 +15,13 @@ function log(object){
   console.log(object);
 }
 
+var httpsOptions = {
+  key: fs.readFileSync('keys/server.key'),
+  cert: fs.readFileSync('keys/server.crt')
+};
+
 var app = express.createServer(
+  httpsOptions,
   express.cookieParser(),
   express.session({
     key: 'chachara.sid',
@@ -97,6 +104,7 @@ var events = {
 
   onJoinRom: function(xmppClient, message, callback){
     xmppClient.join(message.room, function(room, websocket) {
+
       websocket.send({ type: "join-room-ok", room: room.name });
 
       room.on("message", function(websocket, msg) {

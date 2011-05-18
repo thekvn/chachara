@@ -24,7 +24,7 @@ $(function() {
       $(this.node).find("span.current").text(roomType + this.room.shortname());
       $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
-      $(this.node).find(".primary-pane ul").append("<li>Joined " + this.options.room.id + "</li>")
+      $(this.node).find(".primary-pane ul").append("<li class='joined'>Joined " + this.options.room.id + "</li>")
     },
 
     show: function() {
@@ -70,7 +70,8 @@ $(function() {
 
       if (this.room.id === room) {
         var participant = this.app.participants.get(name);
-        var color = "style='color:" + participant.get("color") + "'";
+        var color = (participant == undefined) ? "#fff" : participant.get("color");
+        var cssColor = "style='color:" + color + "'";
 
         var mentions = this.app.getMentions(message.body);
         if (mentions.length > 0) {
@@ -78,9 +79,9 @@ $(function() {
             body = body.replace(mention, "<em>" + mention + "</em>");
           });
 
-          ul.append("<li class='mention'><b class='meta'><b class='name' " + color + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+          ul.append("<li class='mention'><b class='meta'><b class='name' " + cssColor + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         } else {
-          ul.append("<li><b class='meta'><b class='name' " + color + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+          ul.append("<li><b class='meta'><b class='name' " + cssColor + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         }
 
         if (message.html) {
