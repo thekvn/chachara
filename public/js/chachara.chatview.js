@@ -171,7 +171,7 @@ $(function() {
           });
           var room = result[0];
           var data = {
-            type:"message",
+            type:"groupchat",
             body: msg,
             room: room.get("id")
           };
@@ -237,17 +237,14 @@ $(function() {
             var room = this.app.rooms.get(toJid);
 
             if (room == undefined) {
-
               this.app.rooms.add(new Chachara.Room({ id: toJid, type: "chat" }));
-              var client = this.app.client;
-              setTimeout(function(){
-                console.log("inside timeout");
-                client.trigger("chat", data);
-              }, 100);
-
-            } else {
-              console.log("Already Created Chat")
             }
+
+            var client = this.app.client;
+            setTimeout(function(){
+              console.log("inside timeout");
+              client.trigger("chat", data);
+            }, 100);
 
             this.trigger("input", data);
           }
