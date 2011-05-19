@@ -153,6 +153,43 @@ $(function() {
           }
         }
 
+        // Match /leave
+        if (matches = str.match(/^\/leave$/)) {
+          var views = _(this.app.chatViews).toArray();
+          var totalRooms = views.length;
+
+          if (totalRooms > 1) {
+            // Create a prevpane movement
+            var currentIndex = views.indexOf(this);
+            currentIndex = currentIndex - 1;
+
+            if (currentIndex < 0) {
+              currentIndex = 1;
+            }
+
+            _(views).each(function(view) {
+              view.hide();
+            });
+
+            views[currentIndex].show();
+
+            if (this.room.get("type") == "groupchat") {
+              this.trigger("leave", this.room.id);
+            } else {
+              this.trigger("leave-chat", this.room.id);
+            }
+
+            this.app.rooms.remove(this.room.id)
+            this.app.chatViews[this.room.id].remove();
+            delete(this.app.chatViews[this.room.id]);
+            // Hacky, above code doesn't clean the UI correctly
+            window.location.reload(true);
+          }
+
+          $(this.node).find(".chatinput").val("");
+          return true;
+        }
+
         // Match /help
         else if (matches = str.match(/^\/help$/)) {
           $(this.node).find(".chatinput").val("");

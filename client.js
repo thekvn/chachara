@@ -117,6 +117,11 @@ Client.prototype.connect = function(jid, password, callback) {
     callback(this.rooms[name], this.websocket);
   }
 
+  // Leave a room
+  Client.prototype.leave = function(name, callback) {
+    this.rooms[name].leave();
+    callback(this.rooms[name], this.websocket);
+  }
 
   Client.prototype.say = function(what, to, callback) {
     // Send a message.

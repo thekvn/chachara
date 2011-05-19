@@ -27,6 +27,16 @@ Room.prototype.join = function $join$() {
   this.client.connection.send(elem);
 }
 
+Room.prototype.leave = function $leave$() {
+  var elem = new xmpp.Element('presence', {
+    from: this.client.jid,
+    to: this.name + '/' + this.client.nick,
+    type: 'unavailable'
+  });
+
+  this.client.connection.send(elem);
+}
+
 Room.prototype.showPresence = function(to) {
   var elem = new xmpp.Element('presence', {
     from: this.name + '/' + this.client.nick,

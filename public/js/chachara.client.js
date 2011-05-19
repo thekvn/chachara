@@ -60,6 +60,24 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     this.trigger("join-room", {room:room});
   },
 
+  leave: function(room) {
+    var data = {
+      type: "leave-room",
+      room: room
+    };
+    this.send(data);
+    this.trigger("leave-room", {room:room});
+  },
+
+  leaveChat: function(jid) {
+    var data = {
+      type: "leave-chat",
+      to: jid
+    };
+    this.send(data);
+    this.trigger("leave-chat", {to:jid});
+  },
+
   reconnect: function() {
     if (!this.sessionCookie) {
       this.sessionCookie = this.getCookie(this.options.sid);

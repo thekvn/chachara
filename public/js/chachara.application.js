@@ -246,6 +246,14 @@ $(function() {
         self.client.join(roomName);
       });
 
+      newView.bind("leave", function(roomName) {
+        self.client.leave(roomName);
+      });
+
+      newView.bind("leave-chat", function(jid) {
+        self.client.leaveChat(jid);
+      });
+
       newView.bind("prevpane", function(current) {
         var views = _(self.chatViews).toArray();
         var currentIndex = views.indexOf(current);
@@ -305,10 +313,15 @@ $(function() {
       });
 
       this.client.bind("presence", function(message) {
-
         var fromParts   = message.from.split(/\//);
         var nick        = message.nick;
         var thisRoom    = self.rooms.get(fromParts[0]);
+
+        // Ignore presences from rooms I left
+        if (thisRoom === undefined) {
+          return true;
+        }
+
         var participant = thisRoom.participants.get(nick);
         var color = self.addParticipant(nick).get("color");
 

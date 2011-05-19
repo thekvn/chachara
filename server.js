@@ -106,7 +106,7 @@ var events = {
     });
   },
 
-  onJoinRom: function(xmppClient, message, callback){
+  onJoinRoom: function(xmppClient, message, callback){
     xmppClient.join(message.room, function(room, websocket) {
 
       websocket.send({ type: "join-room-ok", room: room.name });
@@ -126,6 +126,18 @@ var events = {
       });
 
     });
+  },
+
+  onLeaveRoom: function(xmppClient, message, callback){
+    xmppClient.leave(message.room, function(room, websocket) {
+      delete(xmppClient.rooms[room.name]);
+      websocket.send({ type: "leave-room-ok", room: room.name });
+    });
+  },
+
+  onLeaveChat: function(xmppClient, message, callback){
+    delete(xmppClient.chats[xmppClient.chats.indexOf(message.to)]);
+    callback({type:"leave-chat-ok"});
   },
 
   onMessage: function(xmppClient, message, callback){
@@ -194,7 +206,13 @@ socket.on('connection', function(client) {
       events.onAuth(xmppClient, identifier, message, sendMessage);
       break;
     case 'join-room':
-      events.onJoinRom(xmppClient, message, sendMessage);
+      events.onJoinRoom(xmppClient, message, sendMessage);
+      break;
+    case 'leave-room':
+      events.onLeaveRoom(xmppClient, message, sendMessage);
+      break;
+    case 'leave-chat':
+      events.onLeaveChat(xmppClient, message, sendMessage);
       break;
     case 'chat':
     case 'groupchat':
