@@ -190,6 +190,13 @@ $(function() {
           return true;
         }
 
+        // Match /signout
+        if (matches = str.match(/^\/signout$/)) {
+          this.trigger("disconnect");
+          window.location.reload(true);
+          return true;
+        }
+
         // Match /help
         else if (matches = str.match(/^\/help$/)) {
           $(this.node).find(".chatinput").val("");

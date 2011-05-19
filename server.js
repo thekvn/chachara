@@ -140,6 +140,12 @@ var events = {
     callback({type:"leave-chat-ok"});
   },
 
+  onDisconnect: function(xmppClient, identifier){
+    xmppClient.disconnect();
+    delete xmppClient;
+    delete connections[identifier];
+  },
+
   onMessage: function(xmppClient, message, callback){
     if (message.type == "chat") {
       xmppClient.say(message.body, message.to, function() {
@@ -214,6 +220,9 @@ socket.on('connection', function(client) {
     case 'leave-chat':
       events.onLeaveChat(xmppClient, message, sendMessage);
       break;
+    case 'disconnect':
+      events.onDisconnect(xmppClient, identifier);
+      break;
     case 'chat':
     case 'groupchat':
       events.onMessage(xmppClient, message, sendMessage);
@@ -234,9 +243,9 @@ socket.on('connection', function(client) {
         xmppClient.awayTimeout.timeout = null;
         xmppClient.disconnectTimeout.timeout = setTimeout(function(){
 
-          xmppClient.disconnect();
-          delete xmppClient;
-          delete connections[identifier];
+        xmppClient.disconnect();
+        delete xmppClient;
+        delete connections[identifier];
 
         }, xmppClient.disconnectTimeout.milliseconds);
       }, xmppClient.awayTimeout.milliseconds);

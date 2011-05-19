@@ -91,6 +91,15 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     this.send(data);
   },
 
+  disconnect: function() {
+    var data = {
+      type: 'disconnect',
+    };
+
+    this.send(data);
+    this.trigger("auth-not-ok", {});
+  },
+
   send: function(data) {
     this.log("Sent [" + data.type + "]");
     this.socket.send(data);
