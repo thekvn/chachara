@@ -16,6 +16,9 @@ $(function() {
       this.rooms        = new Chachara.Rooms();
       this.participants = new Chachara.Participants();
 
+      this.domain = null;
+      this.roomDomain = null;
+
       this.useNotifications = "false";
       this.nick = null;
       this.mentionMatchers = [];
@@ -66,6 +69,7 @@ $(function() {
     restoreState: function(){
       var self = this;
       self.nick = self.jid.split("@")[0];
+      self.domain = self.jid.split("@")[1];
       var mentions = [];
 
       // Add myself, should not render me in the sidebar
@@ -128,6 +132,7 @@ $(function() {
     chat: function(chatData) {
       console.log(chatData);
       var self = this;
+      self.roomDomain = chatData.rooms[0].split('@')[1];
       var tpl = $(_.template("#chat-view-template")());
 
       $("#app").html(tpl.html());

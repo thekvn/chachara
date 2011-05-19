@@ -91,8 +91,9 @@ Room.prototype.onPresence = function(stanza) {
   }
 
   var nick;
+  var mucStanza = stanza.getChild('x', 'http://jabber.org/protocol/muc#user');
 
-  if (stanza.getChild('x', 'http://jabber.org/protocol/muc#user') !== undefined && stanza.getChild('x', 'http://jabber.org/protocol/muc#user').getChild('item') !== undefined) {
+  if (mucStanza !== undefined && mucStanza.getChild('item') !== undefined && mucStanza.getChild('item').attrs.jid !== undefined) {
     nick = stanza.getChild('x', 'http://jabber.org/protocol/muc#user').getChild('item').attrs.jid.split('@')[0];
   } else {
     nick = stanza.attrs.from.split('/')[1];

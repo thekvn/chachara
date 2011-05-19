@@ -141,7 +141,7 @@ $(function() {
         // Match /join
         if (matches = str.match(/^\/join\s(.*)/)) {
           var roomName = matches[1];
-          var roomJid = [roomName, this.room.domain()].join("@");
+          var roomJid = [roomName, this.app.roomDomain].join("@");
 
           if (this.app.rooms.get(roomJid) == undefined) {
             this.trigger("join", roomJid);
@@ -223,7 +223,7 @@ $(function() {
         // Match @nick message
         else if (matches = str.match(/^@(\w+)\s(.*)$/)) {
           var to = matches[1];
-          var toJid = [to, this.app.jid.split("@")[1]].join("@");
+          var toJid = [to, this.app.domain].join("@");
 
           if (this.app.participants.get(to) != undefined) {
             var data = {
