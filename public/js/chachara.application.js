@@ -49,7 +49,6 @@ $(function() {
       $(window).trigger("resize");
 
       this.client.bind("connect-not-ok", function() {
-        console.log("[App] connect-not-ok Presenting Signin Form");
         self.signin();
       });
 
@@ -60,7 +59,6 @@ $(function() {
       });
 
       this.client.bind("disconnect", function() {
-        console.log("[App] Disconnected, Presenting Signin Form");
         self.signin();
       });
 
@@ -102,7 +100,6 @@ $(function() {
         this.signinView.render();
 
         this.client.bind("auth-not-ok", function(message) {
-          console.log("[App] auth-not-ok Presenting Signin Form");
           self.signinView.presentError("Authentication Failed.");
         });
 
@@ -118,8 +115,6 @@ $(function() {
         });
 
         self.client.bind("auth-ok", function() {
-          console.log("[App] Authentication Successful");
-          console.log("[App] Initiating Chat");
           self.signinView.dismiss();
           self.jid = self.authData.jid;
           self.restoreState();
@@ -130,7 +125,6 @@ $(function() {
     },
 
     chat: function(chatData) {
-      console.log(chatData);
       var self = this;
       self.roomDomain = chatData.rooms[0].split('@')[1];
       var tpl = $(_.template("#chat-view-template")());
@@ -163,7 +157,6 @@ $(function() {
       });
 
       this.client.bind("chat", function(message) {
-        console.log("[Private Message Received]");
         self.addParticipant(message.from.split("@")[0]);
 
         if (self.jid != message.from.split("/")[0]) {
@@ -172,13 +165,11 @@ $(function() {
           if (room == undefined) {
             self.rooms.add(new Chachara.Room({ id: message.from.split("/")[0], type: "chat" }));
             setTimeout(function(){
-              console.log("inside timeout");
               self.client.trigger("chat", message);
             }, 100);
 
           } else {
             self.secondaryView.displayPrivateMessage(message);
-            console.log("Already Created Chat")
           }
         }
       });
@@ -234,7 +225,6 @@ $(function() {
         currentIndex = currentIndex + 1;
 
         if (currentIndex < views.length) {
-          console.log("[App] Next Pane");
           _(views).each(function(view) {
             view.hide();
           });
@@ -264,7 +254,6 @@ $(function() {
         currentIndex = currentIndex - 1;
 
         if (currentIndex >= 0) {
-          console.log("[App] Previous Pane");
           _(views).each(function(view) {
             view.hide();
           });
@@ -331,7 +320,6 @@ $(function() {
 
         // Per-room presence. Joined or exited
         if (message.show === "join-room" || message.show == "exit-room") {
-          console.log("[XMPP] " + nick + " " + message.show);
 
           if (participant === undefined) {
             participant = new Chachara.Participant({
@@ -351,7 +339,6 @@ $(function() {
         // Global presence update, i.e. status updates
         } else {
           if (message.show == "offline") {
-            console.log("[XMPP] " + nick + " went offline");
           } else {
             console.log("[XMPP] " + nick + " changed status to " + message.show);
             console.log("[XMPP] new status message: " + message.status);

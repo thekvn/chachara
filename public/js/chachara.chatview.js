@@ -9,6 +9,14 @@ $(function() {
 
       this.id = "pane-" + this.room.shortname();
       this.node = "#" + this.id;
+      this.currentScroll = 0;
+      this.maxScroll = 0;
+      this.computeScroll = function() {
+        var scroll = (this.currentScroll < this.maxScroll)
+                   ? this.currentScroll
+                   : 10000;
+        return scroll;
+      }
 
       this.participantsView = new Chachara.ParticipantsView({
         participants: this.room.participants,
@@ -16,6 +24,7 @@ $(function() {
     },
 
     render: function() {
+      var self = this;
       var template = $(this.template()).attr("id", this.id);
       $(this.el).append(template);
       this.participantsView.el = $(this.node).find(".participants-pane");
@@ -25,12 +34,18 @@ $(function() {
       $(this.node).find(".chatinput").keypress(this.onInput);
       $(this.node).find(".chatinput").focus();
       $(this.node).find(".primary-pane ul").append("<li class='joined'>Joined " + this.options.room.id + "</li>")
+      $(this.node).find(".primary-pane").scroll(function() {
+        self.currentScroll = $(this).scrollTop();
+        if (self.currentScroll > self.maxScroll) {
+          self.maxScroll = self.currentScroll;
+        }
+      });
     },
 
     show: function() {
       $(this.node).show();
-      $(this.node).find(".primary-pane").scrollTop(100000);
-      $(this.node).find(".participants-pane").scrollTop(100000);
+      $(this.node).find(".primary-pane").scrollTop(this.computeScroll());
+      $(this.node).find(".participants-pane").scrollTop(this.computeScroll());
       $(this.node).find(".chatinput").focus();
     },
 
@@ -49,7 +64,7 @@ $(function() {
         $(this.node)
           .find(".primary-pane ul")
           .append("<li class='presence'><b class='meta'><span class='name'>" + who + "</span></b><b class='msg'>" + userAction + " the room</b></li>");
-        $(this.node).find(".primary-pane").scrollTop(10000);
+        $(this.node).find(".primary-pane").scrollTop(this.computeScroll());
       }
     },
 
@@ -88,7 +103,7 @@ $(function() {
           ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + html + "</b></li>");
         }
 
-        $(this.node).find(".primary-pane").scrollTop(100000);
+        $(this.node).find(".primary-pane").scrollTop(this.computeScroll());
       }
     },
 
@@ -110,7 +125,7 @@ $(function() {
         var color = "style='color:" + participant.get("color") + "'";
 
         $(this.node).find(".primary-pane ul").append("<li><b class='meta'><b class='name' " + color + ">" + name + "</b></b><b class='msg embed'>" + html + "</b></li>");
-        $(this.node).find(".primary-pane").scrollTop(10000);
+        $(this.node).find(".primary-pane").scrollTop(this.computeScroll());
       }
     },
 
@@ -364,6 +379,7 @@ $(function() {
             this.app.client.trigger("chat", data);
           }
 
+          $(this.node).find(".primary-pane").scrollTop(100000);
           $(this.node).find(".chatinput").val("");
         }
       }

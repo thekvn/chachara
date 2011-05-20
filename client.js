@@ -185,7 +185,6 @@ Client.prototype.connect = function(jid, password, callback) {
   Client.prototype.onMessage = function(stanza) {
     if (stanza.getChild("body") == undefined) {
       console.log("Somebody is typing!");
-      console.log(util.inspect(stanza, false, 10));
     } else {
       this.emit("message", this.websocket, {
         type : "chat",

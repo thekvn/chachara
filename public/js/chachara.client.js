@@ -34,7 +34,6 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
     });
 
     this.socket.on('message', function(message) {
-      self.log("Received [" + message.type + "]");
       self.trigger(message.type, message);
     });
   },
@@ -101,7 +100,6 @@ _.extend(Chachara.Client.prototype, Backbone.Events, {
   },
 
   send: function(data) {
-    this.log("Sent [" + data.type + "]");
     this.socket.send(data);
   },
 
