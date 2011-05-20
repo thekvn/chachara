@@ -26,7 +26,7 @@ body a { color: #ECD078;}
 
 #chat-view-container {
   overflow: hidden;
-  height: 494px;
+  height: 500px;
 }
 
 .chat-view {
@@ -111,10 +111,31 @@ body a { color: #ECD078;}
 .chat-view .participants-pane li { padding: 0 10px; }
 
 .chat-view .input-pane { float: left; clear: left; width: 100%; position: relative; border-top: 1px solid #444; border-bottom: 1px solid #444; }
-.chat-view .input-pane span.current { display: inline-block; width: 70px;padding-right: 10px; text-align: right;}
+.chat-view .input-pane span.current {
+  display: inline-block;
+  width: 70px;
+  height: 23px;
+  padding-right: 10px;
+  margin-top: 9px;
+  text-align: right;
+  vertical-align: top;
+}
 .chat-view .input-pane form { margin: 0; display: inline-block; }
 .chat-view .input-pane input { font-size: 14px; padding: 5px; background: transparent; width: 80%; border: none; color: #FFF; }
 .chat-view .input-pane input:focus { outline: 0 none; }
+
+.chat-view .input-pane textarea {
+  font-size: 14px;
+  margin-top: 5px;
+  margin-left: 10px;
+  background: transparent;
+  width: 80%;
+  border: none;
+  color: #FFF;
+  overflow: hidden;
+  resize: none;
+}
+.chat-view .input-pane textarea:focus { outline: 0 none; }
 
 
 #secondary-view { font-size: 13px; width: 100%; overflow-y: scroll; }

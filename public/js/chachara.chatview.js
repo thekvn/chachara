@@ -137,15 +137,25 @@ $(function() {
     },
 
     onInput: function(e) {
+      // Shift + Enter
+      if (e.which == '13' && e.shiftKey) {
+        var current = $(this.node).find(".chatinput").val();
+        current += "\n";
+        $(this.node).find(".chatinput").val(current);
+        return false;
+      }
+
       // Prevpane
       if (e.ctrlKey && e.which == '44') { /* < */
         this.trigger("prevpane", this);
+        return false;
       }
 
       // Nextpane
       if (e.ctrlKey && e.which == '46') { /* > */
         e.stopPropagation();
         this.trigger("nextpane", this);
+        return false;
       }
 
       // Submit message
@@ -161,11 +171,11 @@ $(function() {
           if (this.app.rooms.get(roomJid) == undefined) {
             this.trigger("join", roomJid);
             $(this.node).find(".chatinput").val("");
-            return true;
           } else {
             console.log("Already Joined Room")
-            return;
           }
+
+          return false;
         }
 
         // Match /leave
@@ -202,21 +212,21 @@ $(function() {
           }
 
           $(this.node).find(".chatinput").val("");
-          return true;
+          return false;
         }
 
         // Match /signout
         if (matches = str.match(/^\/signout$/)) {
           this.trigger("disconnect");
           window.location.reload(true);
-          return true;
+          return false;
         }
 
         // Match /help
         else if (matches = str.match(/^\/help$/)) {
           $(this.node).find(".chatinput").val("");
           window.open('/help.html');
-          return true;
+          return false;
         }
 
         // Match #room
@@ -236,7 +246,7 @@ $(function() {
           };
           this.trigger("input", data);
           $(this.node).find(".chatinput").val("");
-          return true;
+          return false;
         }
 
         // Match /status
@@ -244,7 +254,7 @@ $(function() {
 
           if (matches == undefined) {
             console.log("Unrecognized status")
-            return;
+            return false;
           } else {
             var data = {
               type   :"set-status",
@@ -254,7 +264,7 @@ $(function() {
 
             this.trigger("input", data);
             $(this.node).find(".chatinput").val("");
-            return true;
+            return false;
           }
         }
 
@@ -276,7 +286,7 @@ $(function() {
           }
 
           $(this.node).find(".chatinput").val("");
-          return true;
+          return false;
         }
 
         // Match @nick message
@@ -309,7 +319,7 @@ $(function() {
           }
 
           $(this.node).find(".chatinput").val("");
-          return true;
+          return false;
         }
 
         // Adds another mention to mentionMatchers array, so the user
@@ -323,7 +333,7 @@ $(function() {
           this.app.mentionMatchers.push(new RegExp("\\b" + $.trim(word) + "\\b", "i"));
 
           $(this.node).find(".chatinput").val("");
-          return true;
+          return false;
         }
 
         else if (matches = str.match(/^\/settings$/)) {
@@ -353,7 +363,7 @@ $(function() {
 
           $(this.node).find(".primary-pane").scrollTop(100000);
           $(this.node).find(".chatinput").val("");
-          return true;
+          return false;
         }
 
         if (str.length > 0) {
@@ -382,6 +392,8 @@ $(function() {
           $(this.node).find(".primary-pane").scrollTop(100000);
           $(this.node).find(".chatinput").val("");
         }
+
+        return false;
       }
     }
   });
