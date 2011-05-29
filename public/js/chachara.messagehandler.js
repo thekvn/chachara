@@ -8,7 +8,7 @@ _.extend(Chachara.MessageHandler.prototype, Backbone.Events, {
     _.bindAll(this, "processMessage");
     this.options = options;
     this.embedHandlers = options.embedHandlers;
-    this.bodyHandlers = options.bodyHandlers;    
+    this.bodyHandlers = options.bodyHandlers;
   },
 
   embeddable: function(regex, body) {
@@ -96,7 +96,9 @@ Chachara.Sanitizer = function(name) {
   this.name = name;
   this.updateBody = function(body) {  
     body = $("<div/>").text(body).html();
-    return body.replace(/\n/g, "<br/>");
+    body = body.replace(/ /g, '&nbsp;');
+    body = body.replace(/\n/g, '<br>');
+    return body;
   }
 }
 

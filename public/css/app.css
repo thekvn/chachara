@@ -31,10 +31,9 @@ body a { color: #ECD078;}
 
 .chat-view {
   padding-right: 200px;
-  font-size: 13px;
   overflow: hidden;
   display: block;
-  font: 13px Helvetica, Arial;
+  font: 12px "Menlo", "Bitstream Vera Sans Mono", "Consolas", monospace;
   color: #ddd;
 }
 
@@ -125,7 +124,7 @@ body a { color: #ECD078;}
 .chat-view .input-pane input:focus { outline: 0 none; }
 
 .chat-view .input-pane textarea {
-  font-size: 14px;
+  font: 13px "Menlo", "Bitstream Vera Sans Mono", "Consolas", monospace;
   margin-top: 5px;
   margin-left: 10px;
   background: transparent;
@@ -138,7 +137,11 @@ body a { color: #ECD078;}
 .chat-view .input-pane textarea:focus { outline: 0 none; }
 
 
-#secondary-view { font-size: 13px; width: 100%; overflow-y: scroll; }
+#secondary-view { 
+  font: 12px "Menlo", "Bitstream Vera Sans Mono", "Consolas", monospace;
+  width: 100%;
+  overflow-y: scroll;
+}
 #secondary-view ul { padding: 0; list-style: none; overflow: hidden; }
 #secondary-view b.meta { display: table-cell; width: 180px; text-align: right; padding-right: 10px; border-right: 1px solid #333; }
 #secondary-view b.msg { display: table-cell; font-weight: normal; padding-left: 10px;}
