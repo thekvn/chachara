@@ -206,6 +206,15 @@ $(function() {
 
             if (this.room.get("type") == "groupchat") {
               this.trigger("leave", this.room.id);
+
+              // Remove room from the cache if it exists in it
+              if (window.localStorage) {
+                var rooms = window.localStorage.getItem("rooms").split(",");
+                if (rooms.indexOf(this.room.id) != -1) {
+                  rooms.splice(rooms.indexOf(this.room.id), 1);
+                  window.localStorage.setItem("rooms", rooms.join(","));
+                }
+              }
             } else {
               this.trigger("leave-chat", this.room.id);
             }

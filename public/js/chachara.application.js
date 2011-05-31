@@ -207,6 +207,18 @@ $(function() {
     createRoomView: function(room) {
       console.log("[App] Create Room View -> " + room.id);
       var self    = this;
+
+      if (room.get("type") == "groupchat") {
+        // Add room to the cache if it doesn't exist in it
+        if (window.localStorage) {
+          var rooms = window.localStorage.getItem("rooms").split(",");
+          if (rooms.indexOf(room.id) == -1) {
+            rooms.push(room.id);
+            window.localStorage.setItem("rooms", rooms.join(","));
+          }
+        }
+      }
+
       var newView = new Chachara.ChatView({
         el: $("#chat-view-container")[0],
         room: room,
