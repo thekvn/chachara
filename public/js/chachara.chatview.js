@@ -166,7 +166,13 @@ $(function() {
         // Match /join
         if (matches = str.match(/^\/join\s(.*)/)) {
           var roomName = matches[1];
-          var roomJid = [roomName, this.app.roomDomain].join("@");
+          var roomJid;
+
+          if (roomName.match(/[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/i) !== null) {
+            roomJid = roomName;
+          } else {
+            roomJid = [roomName, this.app.roomDomain].join("@");
+          }
 
           if (this.app.rooms.get(roomJid) == undefined) {
             this.trigger("join", roomJid);
