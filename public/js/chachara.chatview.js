@@ -7,8 +7,8 @@ $(function() {
       this.room = options.room;
       this.app = options.app;
 
-      this.id = "pane-" + this.room.shortname();
-      this.node = "#" + this.id;
+      this.id = "pane-" + this.room.shortname().replace('.', '_');
+      this.node = "#" + this.id.replace('.', '_');
       this.currentScroll = 0;
       this.maxScroll = 0;
       this.computeScroll = function() {
@@ -25,7 +25,7 @@ $(function() {
 
     render: function() {
       var self = this;
-      var template = $(this.template()).attr("id", this.id);
+      var template = $(this.template()).attr("id", this.id.replace('.', '_'));
       $(this.el).append(template);
       this.participantsView.el = $(this.node).find(".participants-pane");
 
@@ -296,7 +296,7 @@ $(function() {
         }
 
         // Match @nick message
-        else if (matches = str.match(/^@(\w+)\s(.*)$/)) {
+        else if (matches = str.match(/^@([a-z0-9.-]+)\s(.*)$/)) {
           var to = matches[1];
           var toJid = [to, this.app.domain].join("@");
 
@@ -312,6 +312,7 @@ $(function() {
             var room = this.app.rooms.get(toJid);
 
             if (room == undefined) {
+              console.log(data);
               this.app.rooms.add(new Chachara.Room({ id: toJid, type: "chat" }));
             }
 
