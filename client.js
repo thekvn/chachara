@@ -190,7 +190,8 @@ Client.prototype.connect = function(jid, password, callback) {
         type : "chat",
         to   : stanza.attrs.to,
         from : stanza.attrs.from,
-        body : stanza.getChild("body").getText()
+        body : stanza.getChild("body").getText(),
+        timestamp: (new Date).toLocaleTimeString()
       });
     }
   }

@@ -63,7 +63,7 @@ $(function() {
         var userAction = (action == "join-room") ? "joined" : "left";
         $(this.node)
           .find(".primary-pane ul")
-          .append("<li class='presence'><b class='meta'><span class='name'>" + who + "</span></b><b class='msg'>" + userAction + " the room</b></li>");
+          .append("<li title='" + data.timestamp + "' class='presence'><b class='meta'><span class='name'>" + who + "</span></b><b class='msg'>" + userAction + " the room</b></li>");
         $(this.node).find(".primary-pane").scrollTop(this.computeScroll());
       }
     },
@@ -94,13 +94,13 @@ $(function() {
             body = body.replace(mention, "<em>" + mention + "</em>");
           });
 
-          ul.append("<li class='mention'><b class='meta'><b class='name' " + cssColor + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+          ul.append("<li title='" + message.timestamp + "'  class='mention'><b class='meta'><b class='name' " + cssColor + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         } else {
-          ul.append("<li><b class='meta'><b class='name' " + cssColor + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
+          ul.append("<li title='" + message.timestamp + "' ><b class='meta'><b class='name' " + cssColor + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         }
 
         if (message.html) {
-          ul.append("<li><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + html + "</b></li>");
+          ul.append("<li title='" + message.timestamp + "' ><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + html + "</b></li>");
         }
 
         $(this.node).find(".primary-pane").scrollTop(this.computeScroll());
@@ -306,7 +306,8 @@ $(function() {
               body: matches[2],
               to  : toJid,
               from: this.app.jid,
-              id  : toJid
+              id  : toJid,
+              timestamp: (new Date).toLocaleTimeString()
             };
 
             var room = this.app.rooms.get(toJid);
@@ -318,7 +319,6 @@ $(function() {
 
             var client = this.app.client;
             setTimeout(function(){
-              console.log("inside timeout");
               client.trigger("chat", data);
             }, 100);
 
@@ -389,7 +389,8 @@ $(function() {
               body: str,
               to  : this.room.id,
               from: this.app.jid,
-              id  : this.room.id
+              id  : this.room.id,
+              timestamp: (new Date).toLocaleTimeString()
             };
 
             this.trigger("input", data);

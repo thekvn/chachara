@@ -68,7 +68,8 @@ Room.prototype.onMessage = function(stanza) {
     type : "groupchat",
     to   : stanza.attrs.to,
     from : stanza.attrs.from,
-    body : stanza.getChild("body").getText()
+    body : stanza.getChild("body").getText(),
+    timestamp: (new Date).toLocaleTimeString()
   });
 }
 
@@ -115,7 +116,8 @@ Room.prototype.onPresence = function(stanza) {
     from   : stanza.attrs.from,
     nick   : nick,
     status : status,
-    show   : show
+    show   : show,
+    timestamp: (new Date).toLocaleTimeString()
   });
 }
 
