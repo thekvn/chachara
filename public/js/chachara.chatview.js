@@ -32,7 +32,13 @@ $(function() {
       var roomType = (this.room.get("type") == "groupchat") ? "#" : "@";
       $(this.node).find("span.current").text(roomType + this.room.shortname());
       $(this.node).find(".chatinput").keypress(this.onInput);
+
+      // Always focus the input text box
       $(this.node).find(".chatinput").focus();
+      $(".chat-view, #secondary-view").click(function(){
+        $(self.node).find(".chatinput").focus();
+      });
+
       $(this.node).find(".primary-pane ul").append("<li class='joined'>Joined " + this.options.room.id + "</li>")
       $(this.node).find(".primary-pane").scroll(function() {
         self.currentScroll = $(this).scrollTop();
@@ -53,6 +59,19 @@ $(function() {
       $(this.node).hide();
     },
 
+    displayFeedback: function(title, message) {
+      var ul = $(this.node).find(".primary-pane ul");
+      var piece1 = "<li class='presence'><b class='meta'><span class='name'>";
+      var piece2 = "</span></b><b class='msg'>";
+      var piece3 = "</b></li>";
+
+      ul.append([piece1, title, piece2, message, piece3].join(""));
+
+      $(this.node).find(".primary-pane").scrollTop(this.maxScroll + 10000);
+      $(this.node).find(".chatinput").val("");
+      return false;
+    },
+
     displayPresence: function(data) {
       var fromParts = data.from.split("/");
       var room      = fromParts[0];
@@ -70,7 +89,7 @@ $(function() {
 
     displayMessage: function(message, body) {
       var fromParts = message.from.split("/");
-      var html = message.html;
+      //var html = message.html;
       var room, name;
 
       if (message.type == "groupchat") {
@@ -99,9 +118,9 @@ $(function() {
           ul.append("<li title='" + message.timestamp + "' ><b class='meta'><b class='name' " + cssColor + ">" + name + "</b></b><b class='msg'>" + body + "</b></li>");
         }
 
-        if (message.html) {
-          ul.append("<li title='" + message.timestamp + "' ><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + html + "</b></li>");
-        }
+        //if (message.html) {
+        //  ul.append("<li title='" + message.timestamp + "' ><b class='meta'><b class='name'>" + name + "</b></b><b class='msg'>" + html + "</b></li>");
+        //}
 
         $(this.node).find(".primary-pane").scrollTop(this.computeScroll());
       }
@@ -178,7 +197,7 @@ $(function() {
             this.trigger("join", roomJid);
             $(this.node).find(".chatinput").val("");
           } else {
-            console.log("Already Joined Room")
+            return this.displayFeedback("error", "Already Joined Room");
           }
 
           return false;
@@ -268,8 +287,7 @@ $(function() {
         else if (matches = str.match(/^\/status\s(chat|xa|dnd)(\s?.*)$/)) {
 
           if (matches == undefined) {
-            console.log("Unrecognized status")
-            return false;
+            return this.displayFeedback("error", "Unrecognized status");
           } else {
             var data = {
               type   :"set-status",
@@ -278,8 +296,7 @@ $(function() {
             };
 
             this.trigger("input", data);
-            $(this.node).find(".chatinput").val("");
-            return false;
+            return this.displayFeedback("", "Changed to status to " + show + " " + status);
           }
         }
 
@@ -300,8 +317,7 @@ $(function() {
             this.app.messageSound.enabled = audio;
           }
 
-          $(this.node).find(".chatinput").val("");
-          return false;
+          return this.displayFeedback("", "Changed " + matches[1] + " audio notifications to " + matches[2]);
         }
 
         // Match @nick message
@@ -348,8 +364,7 @@ $(function() {
           window.localStorage.setItem("mentions", mentions);
           this.app.mentionMatchers.push(new RegExp("\\b" + $.trim(word) + "\\b", "i"));
 
-          $(this.node).find(".chatinput").val("");
-          return false;
+          return this.displayFeedback("", "Added new mention matcher with the word " + word);
         }
 
         else if (matches = str.match(/^\/settings$/)) {

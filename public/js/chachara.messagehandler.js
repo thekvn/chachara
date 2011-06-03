@@ -29,7 +29,6 @@ _.extend(Chachara.MessageHandler.prototype, Backbone.Events, {
         $.embedly(this.url(message.body),
           { maxWidth : 800, maxHeight: 500,
             success  : function(oembed, dict) {
-              console.log(oembed);
               if (oembed.html) message.html = oembed.html;
               else             message.html = oembed.code;
               self.trigger("embedded", message);
