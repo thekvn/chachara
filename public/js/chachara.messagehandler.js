@@ -20,7 +20,7 @@ _.extend(Chachara.MessageHandler.prototype, Backbone.Events, {
     var regex = /((http|https):\/\/(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)/;
     return regex.exec(body)[0];
   },
-  
+
   processEmbedded: function(message) {
     var self = this;
 
@@ -37,15 +37,15 @@ _.extend(Chachara.MessageHandler.prototype, Backbone.Events, {
       }
     }
   },
-  
+
   processBody: function(message) {
     var self = this;
     var body = message.body;
-    
+
     _.each(this.bodyHandlers, function(handler){
       body = handler.updateBody(body);
     });
-    
+
     return body;
   }
 
@@ -94,9 +94,9 @@ Chachara.FlickrHandler = function(name) {
 // Do more than fixing newlines .html() trick?
 Chachara.Sanitizer = function(name) {
   this.name = name;
-  this.updateBody = function(body) {  
+  this.updateBody = function(body) {
     body = $("<div/>").text(body).html();
-    body = body.replace(/ /g, '&nbsp;');
+    //body = body.replace(/ /g, '&nbsp;');
     body = body.replace(/\n/g, '<br>');
     return body;
   }
@@ -118,5 +118,5 @@ Chachara.ActionMessage = function(name) {
     } else {
       return body;
     }
-  }  
+  }
 }
