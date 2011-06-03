@@ -14,7 +14,7 @@ $(function() {
       this.computeScroll = function() {
         var scroll = (this.currentScroll < this.maxScroll)
                    ? this.currentScroll
-                   : 10000;
+                   : this.maxScroll + 10000;
         return scroll;
       }
 
