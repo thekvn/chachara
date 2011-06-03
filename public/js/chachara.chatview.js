@@ -377,7 +377,7 @@ $(function() {
             ul.append([piece1, setting[0], piece2, setting[1], piece3].join(""));
           });
 
-          $(this.node).find(".primary-pane").scrollTop(100000);
+          $(this.node).find(".primary-pane").scrollTop(this.maxScroll + 10000);
           $(this.node).find(".chatinput").val("");
           return false;
         }
@@ -406,7 +406,7 @@ $(function() {
             this.app.client.trigger("chat", data);
           }
 
-          $(this.node).find(".primary-pane").scrollTop(100000);
+          $(this.node).find(".primary-pane").scrollTop(this.maxScroll + 10000);
           $(this.node).find(".chatinput").val("");
         }
 
