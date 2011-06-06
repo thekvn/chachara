@@ -95,7 +95,7 @@ Chachara.Sanitizer = function(name) {
   this.name = name;
   this.updateBody = function(body) {
     body = $("<div/>").text(body).html();
-    //body = body.replace(/ /g, '&nbsp;');
+    body = body.replace(/(\s{2})/g, " &nbsp");
     body = body.replace(/\n/g, '<br>');
     return body;
   }
